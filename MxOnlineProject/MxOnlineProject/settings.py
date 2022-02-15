@@ -109,6 +109,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 覆盖原有user表
+AUTH_USER_MODEL = "users.UserProfile"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
