@@ -59,3 +59,7 @@ class Message(models.Model):
         # 表名
         db_table = "message"
 ```
+#### 4、orm增删改查
+```python
+# save()方法,如无数据则插入,如有数据则更新
+```
