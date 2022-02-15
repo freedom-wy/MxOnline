@@ -63,3 +63,30 @@ class Message(models.Model):
 ```python
 # save()方法,如无数据则插入,如有数据则更新
 ```
+#### 5、项目部署
+```text
+# 1、安装gunicorn
+# 2、通过gunicorn启动django应用
+gunicorn -w 4 -b 127.0.0.1:8081 Message.wsgi
+# 3、配置nginx
+server {
+            listen 80;
+            server_name message.yase.me; # 这是HOST机器的外部域名，用地址也行
+            root /var/www/MxOnline;
+
+            location / {
+                proxy_pass http://127.0.0.1:8081; # 这里是指向 gunicorn host 的服务地址
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            }
+            
+            location /static {
+                alias /var/www/MxOnline/sample/Message/static;
+            }
+
+        }
+# 4、检查nginx配置文件
+nginx -t
+# 5、重新加载nginx配置文件
+nginx -s reload
+```
