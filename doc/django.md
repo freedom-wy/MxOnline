@@ -20,6 +20,16 @@ python manage.py startapp polls
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, "static")
 # ]
+6、应用创建后需要在settings文件下注册
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'apps.message_form1.apps.MessageForm1Config'
+]
 ```
 #### 3、在django中创建数据库模型类models
 ```text
