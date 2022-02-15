@@ -3,7 +3,24 @@ from django.db import models
 
 # Create your models here.
 
-class Message(models.Model):
+
+class Base(models.Model):
+    """
+    模型类基类
+    """
+    create_time = models.DateTimeField(verbose_name="留言时间", auto_now=True)
+    status = models.BooleanField(verbose_name="是否删除", default=True)
+
+    def set_attrs(self, attrs_dict):
+        for key, value in attrs_dict.items():
+            if hasattr(self, key) and key != "id":
+                setattr(self, key, value)
+
+    class Meta:
+        abstract = True
+
+
+class Message(Base):
     """
     创建留言板的表结构
     """
