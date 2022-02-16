@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    # 导入新的simpleui管理后台应用
     "simpleui",
     # django默认的原始的admin管理后台
     'django.contrib.admin',

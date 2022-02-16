@@ -16,7 +16,8 @@ class UserProfile(AbstractUser):
     gender = models.CharField(verbose_name="性别", choices=GENDER_CHOICES, max_length=6)
     address = models.CharField(max_length=100, verbose_name="地址", default="")
     # 通过手机号注册,不能为空,不能重复
-    mobile = models.CharField(max_length=11, verbose_name="手机号", unique=True)
+    # mobile = models.CharField(max_length=11, verbose_name="手机号", unique=True)
+    mobile = models.CharField(max_length=11, verbose_name="手机号")
     # upload_to设置图片上传后上传位置,相对media的子路径, default设置默认头像
     image = models.ImageField(upload_to="head_image/%Y/%m", verbose_name="头像", default="default.jpg")
 
