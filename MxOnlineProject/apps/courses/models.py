@@ -1,6 +1,7 @@
 # 课程表模型类
 from django.db import models
 from utils.models_base import BaseModels
+from apps.organizations.models import Teacher
 
 
 class Course(BaseModels):
@@ -24,6 +25,8 @@ class Course(BaseModels):
     category = models.CharField("课程类别", max_length=20, default="")
     youneed_know = models.CharField('课程须知', max_length=300, default='')
     teacher_tell = models.CharField('老师告诉你', max_length=300, default='')
+    # 课程关联的讲师
+    teacher = models.ForeignKey(Teacher, verbose_name="讲师", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "课程相关"
