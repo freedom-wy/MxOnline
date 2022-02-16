@@ -13,6 +13,13 @@ class City(BaseModels):
         verbose_name = "城市"
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        """
+        用于在admin中添加城市显示名字
+        :return:
+        """
+        return self.name
+
 
 class CourseOrg(BaseModels):
     """
