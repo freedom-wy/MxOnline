@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    # django默认的原始的admin管理后台
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -116,12 +117,14 @@ AUTH_USER_MODEL = "users.UserProfile"
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# 修改django admin后端语言为中文
+LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
+# 修改django保存的时间数据为当前时区的时间
 USE_TZ = False
 
 

@@ -100,3 +100,28 @@ nginx -t
 # 5、重新加载nginx配置文件
 nginx -s reload
 ```
+#### 6、默认的django admin
+```shell
+# 创建用户
+python manage.py createsuperuser
+# 用户名:admin,密码:abcd1234
+```
+#### 7、将编写好的用户模型注册到后台管理系统中
+```python
+# user应用下的admin中进行注册
+from django.contrib import admin
+from apps.users.models import UserProfile
+# from django.contrib.auth.admin import UserAdmin
+
+
+class UserProfileAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(UserProfile, UserProfileAdmin)
+```
+
+
+
+
+

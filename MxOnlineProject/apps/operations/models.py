@@ -3,6 +3,7 @@ from utils.models_base import BaseModels
 from apps.courses.models import Course
 from django.contrib.auth import get_user_model
 
+# 用于获取自定义用户表或原始django用户表
 UserProfile = get_user_model()
 
 
