@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 
 # Create your models here.
@@ -8,7 +9,8 @@ class Base(models.Model):
     """
     模型类基类
     """
-    create_time = models.DateTimeField(verbose_name="留言时间", auto_now=True)
+    # 设置留言创建时间不调用now方法,只有留言创建时才调用
+    create_time = models.DateTimeField(verbose_name="留言时间", default=now)
     status = models.BooleanField(verbose_name="是否删除", default=True)
 
     def set_attrs(self, attrs_dict):
