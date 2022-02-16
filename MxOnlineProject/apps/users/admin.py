@@ -7,4 +7,5 @@ class UserProfileAdmin(admin.ModelAdmin):
     pass
 
 
+# 在admin后台管理中注册
 admin.site.register(UserProfile, UserAdmin)
