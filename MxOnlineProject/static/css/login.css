@@ -259,12 +259,29 @@ a:hover{
 }
 .form-group > input{
     float:left;
-    width:195px;
     line-height:24px;
     padding:7px 10px;
     border:0;
     line-height:normal\9;
     padding:12px 10px 9px\9;
+}
+
+#jsRegMobile {
+    width: 288px;
+}
+#jsPhoneRegPwd {
+    width: 288px;
+}
+
+#id_captcha_1 {
+    width: 178px;
+}
+
+#form1 input{
+    width:270px;
+}
+#form2 input{
+    width:170px;
 }
 .captcha1 > input{
      width:80px;
@@ -278,7 +295,7 @@ a:hover{
     width:180px;
 }
 .verify-code > input{
-    width:87px;
+    width:150px;
 }
 .verify-code-btn{
     float:left;
@@ -296,10 +313,11 @@ a:hover{
     cursor: pointer;
 }
 .form-group .mobile-register-captcha{
-    width:85px;
+    width:180px;
 }
 .form-group .captcha{
     cursor: pointer;
+    float: right;
 }
 .auto-box{
     height:18px;

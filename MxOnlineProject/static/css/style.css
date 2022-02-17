@@ -713,6 +713,9 @@ caption {
     right: 0;
     top: 0;
 }
+#jsChangePhoneForm .box input#id_captcha_1{
+    position: relative;
+}
 
 .promptbox .cont {
     overflow:hidden;
@@ -4082,7 +4085,7 @@ footer .footer .line {
 }
 
 .personal_list .left li:last-child {
-    border: 0;
+    /*border: 0;*/
 }
 
 .personal_list .left li:hover, .personal_list .left .active2 {
