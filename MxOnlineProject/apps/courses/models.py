@@ -32,6 +32,9 @@ class Course(BaseModels):
         verbose_name = "课程相关"
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class Lesson(BaseModels):
     """
@@ -45,6 +48,10 @@ class Lesson(BaseModels):
     class Meta:
         verbose_name = "章节相关"
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        # 课程名称-章节名称
+        return '《{0}》课程的章节 >> {1}'.format(self.course, self.name)
 
 
 class Video(BaseModels):
@@ -61,6 +68,9 @@ class Video(BaseModels):
         verbose_name = "视频相关"
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class CourseResource(BaseModels):
     """
@@ -74,6 +84,9 @@ class CourseResource(BaseModels):
     class Meta:
         verbose_name = "课程资源"
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
 
 
 

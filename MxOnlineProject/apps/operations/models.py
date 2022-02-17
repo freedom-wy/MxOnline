@@ -19,6 +19,9 @@ class UserAsk(BaseModels):
         verbose_name = '用户咨询'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class CourseComments(BaseModels):
     """

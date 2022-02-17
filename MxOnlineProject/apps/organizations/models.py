@@ -45,6 +45,9 @@ class CourseOrg(BaseModels):
         verbose_name = "课程机构"
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class Teacher(BaseModels):
     """
@@ -68,5 +71,12 @@ class Teacher(BaseModels):
     class Meta:
         verbose_name = "讲师"
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        """
+        机构名称-教师名称
+        :return:
+        """
+        return "[{0}]的教师: {1}".format(self.org, self.name)
 
 
