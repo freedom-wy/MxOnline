@@ -69,7 +69,7 @@ class CourseResource(BaseModels):
     # 课程资源关联到课程
     course = models.ForeignKey(Course, verbose_name="课程", on_delete=models.CASCADE)
     name = models.CharField(verbose_name="资源名称", max_length=100)
-    file = models.FileField(verbose_name="资源文件", upload_to="course/resource/%Y%m", max_length=100)
+    download = models.FileField(verbose_name="资源文件", upload_to="course/resource/%Y%m", max_length=100)
 
     class Meta:
         verbose_name = "课程资源"
