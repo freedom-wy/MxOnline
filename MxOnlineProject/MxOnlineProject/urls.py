@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 # 导入视图
-from apps.users.views import LoginView
+from apps.users.views import LoginView, IndexView
 
 urlpatterns = [
     # django默认的原始的管理后台
     path('admin/', admin.site.urls),
     # name用于给html中url设定的名称
+    path("", IndexView.as_view(), name="index"),
     path("login/", LoginView.as_view(), name="login")
 ]
