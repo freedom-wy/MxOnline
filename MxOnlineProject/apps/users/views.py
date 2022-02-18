@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic.base import View
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 # HttpResponseRedirect跳转
 from django.http import HttpResponseRedirect
 # reverse通过url中设置的name找到url
@@ -21,7 +21,11 @@ class LoginView(View):
     """
     登录视图
     """
+
     def get(self, request):
+        # 在登录页面,如果当前用户已登录则跳转到首页
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("index"))
         return render(request, "login.html")
 
     def post(self, request):
@@ -46,3 +50,11 @@ class LoginView(View):
         else:
             return render(request, "login.html", {"login_form": login_form})
 
+
+class Logout(View):
+    """
+    退出
+    """
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect(reverse("index"))
