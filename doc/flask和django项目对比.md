@@ -60,6 +60,18 @@ if user and user.check_password(login_form.password.data):
     # 写入cookie信息, 需要在user模型类中继承UserMixin类, 可以在login_user中设置是否记住cookie
     login_user(user, remember=True)
 ```
+#### 3、django的templages中通过全局变量request下的user实例的is_authenticated方法查看是否登录成功
+```html
+{% if request.user.is_authenticated %}
+    pass
+{% endif %}
+```
+#### 4、flask的templages中通过current_user的is_authenticated方法查看是否登录成功
+```html
+{% if current_user.is_authenticated %}
+    pass
+{% endif %}
+```
 
 ### 页面跳转
 #### 1、django中使用HttpResponseRedirect进行页面跳转
