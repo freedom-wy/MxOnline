@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     "apps.courses.apps.CoursesConfig",
     "apps.operations.apps.OperationsConfig",
     "apps.organizations.apps.OrganizationsConfig",
-    "apps.users.apps.UsersConfig"
+    "apps.users.apps.UsersConfig",
+    # 图片验证码
+    "captcha"
 ]
 
 MIDDLEWARE = [

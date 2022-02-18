@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 # 导入视图
 from apps.users.views import LoginView, IndexView, Logout
+from django.urls import include
+
 
 urlpatterns = [
     # django默认的原始的管理后台
@@ -24,5 +26,7 @@ urlpatterns = [
     # name用于给html中url设定的名称
     path("", IndexView.as_view(), name="index"),
     path("login/", LoginView.as_view(), name="login"),
-    path("logout/", Logout.as_view(), name="logout")
+    path("logout/", Logout.as_view(), name="logout"),
+    # 添加验证码路由
+    path("captcha/", include("captcha.urls"))
 ]

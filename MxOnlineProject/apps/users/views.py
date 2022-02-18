@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 # reverse通过url中设置的name找到url
 from django.urls import reverse
-from .forms import LoginForm
+from .forms import LoginForm, DynamicLoginForm
 
 
 class IndexView(View):
@@ -26,7 +26,8 @@ class LoginView(View):
         # 在登录页面,如果当前用户已登录则跳转到首页
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse("index"))
-        return render(request, "login.html")
+        login_form = DynamicLoginForm()
+        return render(request, "login.html", {"login_form": login_form})
 
     def post(self, request):
         # 获取从前端传递过来的用户名和密码
