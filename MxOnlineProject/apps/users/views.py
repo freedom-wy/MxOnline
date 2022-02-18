@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 # reverse通过url中设置的name找到url
 from django.urls import reverse
+from .forms import LoginForm
 
 
 class IndexView(View):
@@ -25,15 +26,23 @@ class LoginView(View):
 
     def post(self, request):
         # 获取从前端传递过来的用户名和密码
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        # 校验用户名密码是否正确
-        user = authenticate(username=username, password=password)
-        if user:
-            # 校验成功,执行登录操作
-            login(request, user)
-            # 跳转到首页
-            return HttpResponseRedirect(reverse("index"))
+        # username = request.POST.get("username")
+        # password = request.POST.get("password")
+        # 通过form校验前端传递过来的用户名密码数据
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            username = login_form.cleaned_data.get("username")
+            password = login_form.cleaned_data.get("password")
+            # 校验用户名密码是否正确
+            user = authenticate(username=username, password=password)
+            if user:
+                # 校验成功,执行登录操作
+                login(request, user)
+                # 跳转到首页
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                # 登录校验失败
+                return render(request, "login.html", {"msg": "用户名或密码错误", "login_form": login_form})
         else:
-            return render(request, "login.html")
+            return render(request, "login.html", {"login_form": login_form})
 
