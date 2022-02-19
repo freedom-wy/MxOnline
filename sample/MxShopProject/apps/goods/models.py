@@ -19,7 +19,7 @@ class GoodsCategory(BaseModels):
     category_type = models.IntegerField(choices=CATEGORY_TYPE, verbose_name="类目级别", help_text="类目级别")
     # 通过GoodsCategory.object.get(id=12).sub_cat.object.all()可以取到关联数据, 数据库会生成parent_category_id字段
     parent_category = models.ForeignKey("self", null=True, blank=True, verbose_name="父类目级别", help_text="父类目级别",
-                                        related_name="sub_cat", on_delete=False)
+                                        related_name="sub_cat", on_delete=models.CASCADE)
     is_tab = models.BooleanField(default=False, verbose_name="是否导航", help_text="是否导航")
 
     class Meta:
@@ -35,7 +35,7 @@ class GoodsCategoryBrand(BaseModels):
     品牌名
     """
     # GoodsCategory.object.get(id=12).brands 获取品牌信息
-    category = models.ForeignKey(GoodsCategory, related_name='brands', on_delete=False, null=True, blank=True, verbose_name="商品类目")
+    category = models.ForeignKey(GoodsCategory, related_name='brands', on_delete=models.CASCADE, null=True, blank=True, verbose_name="商品类目")
     name = models.CharField(default="", max_length=30, verbose_name="品牌名", help_text="品牌名")
     desc = models.TextField(default="", max_length=200, verbose_name="品牌描述", help_text="品牌描述")
     image = models.ImageField(max_length=200, upload_to="brands/")
@@ -53,7 +53,7 @@ class Goods(BaseModels):
     """
     商品
     """
-    category = models.ForeignKey(GoodsCategory, on_delete=False, verbose_name="商品类目")
+    category = models.ForeignKey(GoodsCategory, on_delete=models.CASCADE, verbose_name="商品类目")
     goods_sn = models.CharField(max_length=50, default="", verbose_name="商品唯一货号")
     name = models.CharField(max_length=100, verbose_name="商品名")
     click_num = models.IntegerField(default=0, verbose_name="点击数")
@@ -83,7 +83,7 @@ class GoodsImage(BaseModels):
     """
     商品轮播图
     """
-    goods = models.ForeignKey(Goods, related_name="images", on_delete=False, verbose_name="商品")
+    goods = models.ForeignKey(Goods, related_name="images", on_delete=models.CASCADE, verbose_name="商品")
     image = models.ImageField(upload_to="", verbose_name="图片", null=True, blank=True)
 
     class Meta:
@@ -98,7 +98,7 @@ class Banner(BaseModels):
     """
     轮播的商品
     """
-    goods = models.ForeignKey(Goods, on_delete=False, verbose_name="商品")
+    goods = models.ForeignKey(Goods, on_delete=models.CASCADE, verbose_name="商品")
     image = models.ImageField(upload_to='banner', verbose_name="轮播图片")
     index = models.IntegerField(default=0, verbose_name="轮播顺序")
 

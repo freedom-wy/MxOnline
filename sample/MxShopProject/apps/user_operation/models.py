@@ -10,8 +10,8 @@ class UserFav(BaseModels):
     """
     用户收藏
     """
-    user = models.ForeignKey(User, on_delete=False, verbose_name="用户")
-    goods = models.ForeignKey(Goods, on_delete=False, verbose_name="商品", help_text="商品")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
+    goods = models.ForeignKey(Goods, on_delete=models.CASCADE, verbose_name="商品", help_text="商品")
 
     class Meta:
         verbose_name = '用户收藏'
@@ -33,7 +33,7 @@ class UserLeavingMessage(BaseModels):
         (4, "售后"),
         (5, "求购")
     )
-    user = models.ForeignKey(User, on_delete=False, verbose_name="用户")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
     message_type = models.IntegerField(default=1, choices=MESSAGE_CHOICES, verbose_name="留言类型",
                                        help_text=u"留言类型: 1(留言),2(投诉),3(询问),4(售后),5(求购)")
     subject = models.CharField(max_length=100, default="", verbose_name="主题", help_text="主题")
@@ -52,7 +52,7 @@ class UserAddress(BaseModels):
     """
     用户收货地址
     """
-    user = models.ForeignKey(User, on_delete=False, verbose_name="用户")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
     province = models.CharField(max_length=100, default="", verbose_name="省份")
     city = models.CharField(max_length=100, default="", verbose_name="城市")
     district = models.CharField(max_length=100, default="", verbose_name="区域")
