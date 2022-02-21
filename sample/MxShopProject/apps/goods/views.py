@@ -13,6 +13,9 @@ from .serializers import GoodsSerializerDemo
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 
+# 使用viewset封装serializer数据
+from rest_framework import mixins, viewsets
+
 
 class GoodsListViewSource(View):
 
@@ -62,3 +65,10 @@ class GoodsListViewDemo(generics.ListAPIView):
     pagination_class = GoodsPagination
 
 
+class GoodsListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    使用viewset封装serializer数据
+    """
+    queryset = Goods.objects.all()
+    serializer_class = GoodsSerializerDemo
+    pagination_class = GoodsPagination

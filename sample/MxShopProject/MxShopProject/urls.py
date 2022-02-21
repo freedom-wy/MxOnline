@@ -16,8 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 # 通过django的serializers对模型类数据进行序列化并向前端返回数据
-from apps.goods.views import GoodsListViewSource
-from apps.goods.views import GoodsListViewDemo
+from apps.goods.views import GoodsListViewSource, GoodsListViewDemo, GoodsListViewSet
+from rest_framework.routers import DefaultRouter
+
+
+# 实例化路由并注册
+router = DefaultRouter()
+router.register("goods_set", GoodsListViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +31,6 @@ urlpatterns = [
     # 原始json数据返回方法
     path("goods_source/", GoodsListViewSource.as_view(), name="goods_source"),
     # drf返回json数据方法
-    path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo")
+    path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo"),
+    path("", include(router.urls))
 ]
