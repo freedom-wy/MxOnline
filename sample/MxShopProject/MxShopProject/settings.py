@@ -79,8 +79,14 @@ WSGI_APPLICATION = 'MxShopProject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "MxShop",
+        "USER": "root",
+        "PASSWORD": "abcd1234",
+        "HOST": "127.0.0.1",
+        "PORT": 3306
     }
 }
 
@@ -103,6 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 覆盖django默认的用户模型类
 AUTH_USER_MODEL = "users.UserProfile"
 
 # Internationalization
@@ -121,9 +128,9 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static")
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
