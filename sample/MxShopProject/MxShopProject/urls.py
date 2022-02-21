@@ -17,8 +17,12 @@ from django.contrib import admin
 from django.urls import path
 # 通过django的serializers对模型类数据进行序列化并向前端返回数据
 from apps.goods.views import GoodsListViewSource
+from apps.goods.views import GoodsListViewDemo
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("goods_source/", GoodsListViewSource.as_view(), name="goods_source")
+    # 原始json数据返回方法
+    path("goods_source/", GoodsListViewSource.as_view(), name="goods_source"),
+    # drf返回json数据方法
+    path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo")
 ]

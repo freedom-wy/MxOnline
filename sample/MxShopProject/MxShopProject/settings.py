@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     "apps.users.apps.UsersConfig",
     "apps.goods.apps.GoodsConfig",
     "apps.trade.apps.TradeConfig",
-    "apps.user_operation.apps.UserOperationConfig"
+    "apps.user_operation.apps.UserOperationConfig",
+    # 引入django rest framework应用
+    "rest_framework"
 ]
 
 MIDDLEWARE = [
