@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from apps.goods.views import GoodsListView
+# 通过django的serializers对模型类数据进行序列化并向前端返回数据
+from apps.goods.views import GoodsListViewSource
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("goods/", GoodsListView.as_view(), name="goods")
+    path("goods_source/", GoodsListViewSource.as_view(), name="goods_source")
 ]

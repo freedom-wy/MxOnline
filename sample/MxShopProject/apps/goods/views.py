@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.core import serializers
 
 
-class GoodsListView(View):
+class GoodsListViewSource(View):
 
     def get(self, request):
         # 原始方法
