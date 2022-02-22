@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     "apps.trade.apps.TradeConfig",
     "apps.user_operation.apps.UserOperationConfig",
     # 引入django rest framework应用
-    "rest_framework"
+    "rest_framework",
+    # 用于测试的app
+    "apps.students.apps.StudentsConfig"
 ]
 
 MIDDLEWARE = [
