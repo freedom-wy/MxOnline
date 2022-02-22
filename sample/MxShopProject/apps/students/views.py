@@ -37,7 +37,7 @@ class StudentView(View):
         serializer = StudentSerializer(data=data)
         # 验证数据,如果验证数据失败,直接抛出异常
         serializer.is_valid(raise_exception=True)
-        return JsonResponse(data=serializer.validated_data)
+        return JsonResponse(data={}, status=200)
 
 
 class StudentViewSet(ModelViewSet):
