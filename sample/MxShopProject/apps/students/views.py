@@ -3,6 +3,7 @@ from .models import Student
 from .serializers import StudentModelSerializer, StudentSerializer
 from django.views import View
 from django.http.response import JsonResponse
+import json
 
 
 class StudentView(View):
@@ -20,8 +21,23 @@ class StudentView(View):
         # serializer = StudentSerializer(instance=student)
         # 序列化数据
         students_data = serializer.data
+        # print(type(students_data))
         # 返回数据
         return JsonResponse(data=students_data, safe=False)
+
+    def post(self, request):
+        """
+        用于操作反序列化
+        :param request:
+        :return:
+        """
+        # 获取前端传递过来的json数据,需要关闭csrf中间件
+        data = json.loads(request.body)
+        # 反序列化
+        serializer = StudentSerializer(data=data)
+        # 验证数据,如果验证数据失败,直接抛出异常
+        serializer.is_valid(raise_exception=True)
+        return JsonResponse(data=serializer.validated_data)
 
 
 class StudentViewSet(ModelViewSet):
