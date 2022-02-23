@@ -34,10 +34,14 @@ class StudentView(View):
         # 获取前端传递过来的json数据,需要关闭csrf中间件
         data = json.loads(request.body)
         # 反序列化
-        serializer = StudentSerializer(data=data)
+        serializer1 = StudentSerializer(data=data)
         # 验证数据,如果验证数据失败,直接抛出异常
-        serializer.is_valid(raise_exception=True)
-        return JsonResponse(data={}, status=200)
+        serializer1.is_valid(raise_exception=True)
+        # 保存数据
+        save_student = Student.objects.create(**serializer1.validated_data)
+        # 如果需要向前端展示则需要进行序列化
+        serializer2 = StudentSerializer(instance=save_student)
+        return JsonResponse(data=serializer2.data, status=200)
 
 
 class StudentViewSet(ModelViewSet):

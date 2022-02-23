@@ -38,7 +38,6 @@ class StudentSerializer(serializers.Serializer):
         return attrs
 
 
-
 class StudentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
