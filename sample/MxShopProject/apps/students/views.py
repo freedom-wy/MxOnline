@@ -15,6 +15,7 @@ class StudentView(View):
     """
     未使用django rest framework
     """
+
     def get(self, request):
         # 取出多条要序列化的数据
         students = Student.objects.all()
@@ -68,6 +69,25 @@ class StudentView(View):
         # 向前端返回序列化数据
         serializer2 = StudentSerializer(instance=update_student)
         return JsonResponse(data=serializer2.data, status=200)
+
+
+class StudentApiView(APIView):
+    def post(self, request):
+        """
+        :param request:
+        :return:
+        """
+        # 取客户端数据
+        data = request.data
+        # 反序列化
+        serializer1 = StudentModelSerializer(data=data)
+        # 校验数据
+        serializer1.is_valid(raise_exception=True)
+        # 保存数据
+        save_student = serializer1.save()
+        # response_data = serializer1.data
+        serializer2 = StudentSerializer(instance=save_student)
+        return Response(data=serializer2.data, status=status.HTTP_200_OK)
 
 
 class StudentViewSet(ModelViewSet):

@@ -196,6 +196,7 @@ from rest_framework.response import Response
 # http状态码
 from rest_framework import status
 ```
+#### 9、rest_framework继承了APIView,注册路由时与继承View相同,path("student_api/", StudentApiView.as_view(), name="student_api")
 
 
 

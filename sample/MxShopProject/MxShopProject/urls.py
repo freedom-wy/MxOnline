@@ -18,7 +18,7 @@ from django.urls import path, include
 # 通过django的serializers对模型类数据进行序列化并向前端返回数据
 from apps.goods.views import GoodsListViewSource, GoodsListViewDemo, GoodsListViewSet
 from rest_framework.routers import DefaultRouter
-from apps.students.views import StudentViewSet, StudentView
+from apps.students.views import StudentViewSet, StudentView, StudentApiView
 
 
 # 实例化路由并注册
@@ -35,5 +35,6 @@ urlpatterns = [
     # drf返回json数据方法
     path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo"),
     path("students_source/", StudentView.as_view(), name="students_source"),
+    path("student_api/", StudentApiView.as_view(), name="student_api"),
     path("", include(router.urls))
 ]
