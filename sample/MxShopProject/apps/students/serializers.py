@@ -37,6 +37,30 @@ class StudentSerializer(serializers.Serializer):
             raise serializers.ValidationError("300班级不能有男的")
         return attrs
 
+    def create(self, validated_data):
+        """
+        保存数据
+        :param validated_data: 验证通过后的数据
+        :return:
+        """
+        student = Student.objects.create(**validated_data)
+        return student
+
+    def update(self, instance, validated_data):
+        """
+        更新数据
+        :param instance:
+        :param validated_data:
+        :return:
+        """
+        instance.name = validated_data.get("name")
+        instance.sex = validated_data.get("sex")
+        instance.age = validated_data.get("age")
+        instance.class_null = validated_data.get("class_null")
+        instance.description = validated_data.get("description")
+        instance.save()
+        return instance
+
 
 class StudentModelSerializer(serializers.ModelSerializer):
     class Meta:
