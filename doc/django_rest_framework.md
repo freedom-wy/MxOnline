@@ -111,3 +111,72 @@ def post(self, request):
     serializer.is_valid(raise_exception=True)
     return JsonResponse(data=serializer.validated_data)
 ```
+#### 4、保存数据和更新数据
+```python
+# 保存数据
+# 1、在视图中,数据验证后,调用序列化器的save方法
+def post(self, request):
+    """
+    用于操作反序列化
+    :param request:
+    :return:
+    """
+    # 获取前端传递过来的json数据,需要关闭csrf中间件
+    data = json.loads(request.body)
+    # 反序列化
+    serializer1 = StudentSerializer(data=data)
+    # 验证数据,如果验证数据失败,直接抛出异常
+    serializer1.is_valid(raise_exception=True)
+    # 通过view保存数据
+    # save_student = Student.objects.create(**serializer1.validated_data)
+    # 通过serializers保存数据,如果是添加数据则会调用create,如果是更新则会调用update
+    save_student = serializer1.save()
+    # 如果需要向前端展示则需要进行序列化
+    serializer2 = StudentSerializer(instance=save_student)
+    return JsonResponse(data=serializer2.data, status=200)
+# 2、调用序列化器的save方法后会调用序列化器的create方法
+def create(self, validated_data):
+    """
+    保存数据
+    :param validated_data: 验证通过后的数据
+    :return:
+    """
+    student = Student.objects.create(**validated_data)
+    return student
+# 更新数据
+# 1、在视图中调用序列化器时需要传递要更新数据的实例并调用序列化器的save方法
+def put(self, request):
+    """
+    更新数据
+    :param request:
+    :return:
+    """
+    data = json.loads(request.body)
+    # 查找要更新的数据
+    instance = Student.objects.get(pk=data.get("id"))
+    # 反序列化
+    serializer1 = StudentSerializer(instance=instance, data=data)
+    # 数据验证
+    serializer1.is_valid(raise_exception=True)
+    # 更新数据,调用序列化器中的update方法
+    update_student = serializer1.save()
+    # 向前端返回序列化数据
+    serializer2 = StudentSerializer(instance=update_student)
+    return JsonResponse(data=serializer2.data, status=200)
+# 2、调用序列化器的save方法后会调用序列化器的update方法
+def update(self, instance, validated_data):
+    """
+    更新数据
+    :param instance:
+    :param validated_data:
+    :return:
+    """
+    instance.name = validated_data.get("name")
+    instance.sex = validated_data.get("sex")
+    instance.age = validated_data.get("age")
+    instance.class_null = validated_data.get("class_null")
+    instance.description = validated_data.get("description")
+    # 调用模型类的save方法
+    instance.save()
+    return instance
+```
