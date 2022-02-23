@@ -182,3 +182,24 @@ def update(self, instance, validated_data):
 ```
 #### 5、ModelSerializer与常规的Serailizer相同,提供了基于模型类自动生成一系列字段,基于模型类自动生成validators,也可以重写,包含默认的create()和update()方法
 #### 6、视图如果继承的是View,则需要在get,post,put等方法中显示的进行序列化和反序列化,验证数据,save等操作,在序列化器类中不需要定义create和update方法
+#### 7、客户端发送content-type类型,用于发送json数据,服务端通过客户端发来的请求头中的accept来返回数据格式
+#### 8、django原生的视图和response与rest-framework的视图和response
+```python
+# django原生的视图和response
+from django.views import View
+from django.http.response import HttpResponse, JsonResponse
+
+# 引入rest-framework的视图基类和response
+from rest_framework.views import APIView
+from rest_framework.response import Response
+# 在post方法中通过request.data获取post请求体数据,通过request.query_params获取查询字段(get方法相同)
+# http状态码
+from rest_framework import status
+```
+
+
+
+
+
+
+

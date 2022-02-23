@@ -2,8 +2,13 @@ from rest_framework.viewsets import ModelViewSet
 from .models import Student
 from .serializers import StudentModelSerializer, StudentSerializer
 from django.views import View
-from django.http.response import JsonResponse
+from django.http.response import HttpResponse, JsonResponse
 import json
+# 引入rest-framework的视图基类和response
+from rest_framework.views import APIView
+from rest_framework.response import Response
+# http状态码
+from rest_framework import status
 
 
 class StudentView(View):
