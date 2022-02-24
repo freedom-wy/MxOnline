@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 # 通过django的serializers对模型类数据进行序列化并向前端返回数据
 from apps.goods.views import GoodsListViewSource, GoodsListViewDemo, GoodsListViewSet
 from rest_framework.routers import DefaultRouter
-from apps.students.views import StudentViewSet, StudentView, StudentApiView
+from apps.students.views import StudentViewSet, StudentView, StudentApiView, StudentGenericAPIView, StudentGenericAPIViewPk
+from apps.students.views import StudentsListView
 
 
 # 实例化路由并注册
@@ -36,5 +37,8 @@ urlpatterns = [
     path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo"),
     path("students_source/", StudentView.as_view(), name="students_source"),
     path("student_api/", StudentApiView.as_view(), name="student_api"),
+    path("student_gen/", StudentGenericAPIView.as_view(), name="student_gen"),
+    re_path(r"^student_pk/(?P<pk>\d+)/$", StudentGenericAPIViewPk.as_view(), name="student_pk"),
+    path("students_list/", StudentsListView.as_view(), name="students_list"),
     path("", include(router.urls))
 ]

@@ -181,6 +181,7 @@ def update(self, instance, validated_data):
     return instance
 ```
 #### 5、ModelSerializer与常规的Serailizer相同,提供了基于模型类自动生成一系列字段,基于模型类自动生成validators,也可以重写,包含默认的create()和update()方法
+#### 5.1 在ModelSerializer中进行字段限定时通过extra_kwargs进行设置
 #### 6、视图如果继承的是View,则需要在get,post,put等方法中显示的进行序列化和反序列化,验证数据,save等操作,在序列化器类中不需要定义create和update方法
 #### 7、客户端发送content-type类型,用于发送json数据,服务端通过客户端发来的请求头中的accept来返回数据格式
 #### 8、django原生的视图和response与rest-framework的视图和response
@@ -197,6 +198,81 @@ from rest_framework.response import Response
 from rest_framework import status
 ```
 #### 9、rest_framework继承了APIView,注册路由时与继承View相同,path("student_api/", StudentApiView.as_view(), name="student_api")
+#### 10、GenericAPIView通用视图类
+```python
+# serializer_class 类属性,指明视图使用的序列化器类
+# queryset 类属性,指明使用的数据查询集,model查询数据
+# get_serializer_class 实例方法,可在方法内部通过逻辑返回不同的序列化类
+# get_serializer 实例方法,用于返回序列化器对象,主要用来给Mixin扩展类使用,即返回serializer_class的值
+# get_queryset 实例方法,用于返回视图使用的查询集,即返回queryset的值
+# get_object 实例方法,用于返回视图所需的模型类数据对象
+class StudentGenericAPIView(GenericAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentModelSerializer
+
+    def get_serializer_class(self):
+        """
+        通过逻辑控制视图调用的序列化器
+        :return:
+        """
+        if self.request.method == "POST":
+            return StudentModelSerializer
+        return StudentModelSerializerSub
+
+    def get(self, request):
+        serializer = self.get_serializer(instance=self.get_queryset(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        data = request.data
+        # 反序列化
+        serializer1 = self.get_serializer(data=data)
+        # 验证数据
+        serializer1.is_valid(raise_exception=True)
+        # 保存数据入库
+        instance = serializer1.save()
+        # 序列化一条数据
+        serializer2 = self.get_serializer(instance=instance)
+        return Response(serializer2.data)
+```
+#### 11、5个视图扩展类
+```python
+# 获取多条数据
+from rest_framework.mixins import ListModelMixin
+# 添加数据
+from rest_framework.mixins import CreateModelMixin
+# 获取单条数据
+from rest_framework.mixins import RetrieveModelMixin
+# 更新数据
+from rest_framework.mixins import UpdateModelMixin
+# 删除数据
+from rest_framework.mixins import DestroyModelMixin
+
+
+class StudentSingleView(RetrieveModelMixin, GenericAPIView, UpdateModelMixin, DestroyModelMixin):
+    queryset = Student.objects.all()
+    serializer_class = StudentModelSerializer
+
+    def get(self, request, pk):
+        return self.retrieve(request, pk)
+
+    def put(self, request, pk):
+        return self.update(request, pk)
+
+    def delete(self, request, pk):
+        return self.destroy(request, pk)
+
+
+class StudentsListView(ListModelMixin, GenericAPIView, CreateModelMixin):
+    queryset = Student.objects.all()
+    serializer_class = StudentModelSerializer
+
+    def get(self, request):
+        return self.list(request)
+
+    def post(self, request):
+        return self
+```
 
 
 

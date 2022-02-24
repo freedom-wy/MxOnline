@@ -66,3 +66,9 @@ class StudentModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = "__all__"
+
+
+class StudentModelSerializerSub(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ["name", "class_null"]
