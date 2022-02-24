@@ -273,7 +273,44 @@ class StudentsListView(ListModelMixin, GenericAPIView, CreateModelMixin):
     def post(self, request):
         return self
 ```
+#### GenericAPIView的视图子类
+```python
+"""
+1）CreateAPIView
+提供 post 方法
+继承自： GenericAPIView、CreateModelMixin
+2）ListAPIView
+提供 get 方法
+继承自：GenericAPIView、ListModelMixin
+3）RetrieveAPIView
+提供 get 方法
+继承自: GenericAPIView、RetrieveModelMixin
+4）DestoryAPIView
+提供 delete 方法
+继承自：GenericAPIView、DestoryModelMixin
+5）UpdateAPIView
+提供 put 和 patch 方法
+继承自：GenericAPIView、UpdateModelMixin
+6）RetrieveUpdateAPIView
+提供 get、put、patch方法
+继承自： GenericAPIView、RetrieveModelMixin、UpdateModelMixin
+7）RetrieveUpdateDestoryAPIView
+提供 get、put、patch、delete方法
+继承自：GenericAPIView、RetrieveModelMixin、UpdateModelMixin、DestoryModelMixin
+"""
+"""使用GenericAPIView的视图子类进一步简化开发api接口的代码"""
+from rest_framework.generics import ListAPIView,CreateAPIView
+class Students3GenericAPIView(ListAPIView,CreateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentModelSerializer
 
+
+from rest_framework.generics import RetrieveAPIView,UpdateAPIView,DestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView # 结合了上面三个子类的功能
+class Student3GenericAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentModelSerializer
+```
 
 
 
