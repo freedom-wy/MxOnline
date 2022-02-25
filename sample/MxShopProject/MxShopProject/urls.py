@@ -18,27 +18,29 @@ from django.urls import path, include, re_path
 # 通过django的serializers对模型类数据进行序列化并向前端返回数据
 from apps.goods.views import GoodsListViewSource, GoodsListViewDemo, GoodsListViewSet
 from rest_framework.routers import DefaultRouter
-from apps.students.views import StudentViewSet, StudentView, StudentApiView, StudentGenericAPIView, StudentGenericAPIViewPk
-from apps.students.views import StudentsListView
+# from apps.students.views import StudentViewSet, StudentView, StudentApiView, StudentGenericAPIView, StudentGenericAPIViewPk
+# from apps.students.views import StudentsListView
+from apps.students.views import StudentViewSet
 
 
 # 实例化路由并注册
 router = DefaultRouter()
-router.register("goods_set", GoodsListViewSet)
+# router.register("goods_set", GoodsListViewSet)
+# 不能使用正则
 router.register("student_set", StudentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 仅是在api接口页面上显示一个登录按钮?
     path('api-auth/', include('rest_framework.urls')),
-    # 原始json数据返回方法
-    path("goods_source/", GoodsListViewSource.as_view(), name="goods_source"),
-    # drf返回json数据方法
-    path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo"),
-    path("students_source/", StudentView.as_view(), name="students_source"),
-    path("student_api/", StudentApiView.as_view(), name="student_api"),
-    path("student_gen/", StudentGenericAPIView.as_view(), name="student_gen"),
-    re_path(r"^student_pk/(?P<pk>\d+)/$", StudentGenericAPIViewPk.as_view(), name="student_pk"),
-    path("students_list/", StudentsListView.as_view(), name="students_list"),
+    # # 原始json数据返回方法
+    # path("goods_source/", GoodsListViewSource.as_view(), name="goods_source"),
+    # # drf返回json数据方法
+    # path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo"),
+    # path("students_source/", StudentView.as_view(), name="students_source"),
+    # path("student_api/", StudentApiView.as_view(), name="student_api"),
+    # path("student_gen/", StudentGenericAPIView.as_view(), name="student_gen"),
+    # re_path(r"^student_pk/(?P<pk>\d+)/$", StudentGenericAPIViewPk.as_view(), name="student_pk"),
+    # path("students_list/", StudentsListView.as_view(), name="students_list"),
     path("", include(router.urls))
 ]

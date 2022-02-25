@@ -273,7 +273,7 @@ class StudentsListView(ListModelMixin, GenericAPIView, CreateModelMixin):
     def post(self, request):
         return self
 ```
-#### GenericAPIView的视图子类
+#### 12、GenericAPIView的视图子类
 ```python
 """
 1）CreateAPIView
@@ -310,6 +310,56 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView # 结合了上�
 class Student3GenericAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentModelSerializer
+```
+#### ============以上视图类的访问所有数据和访问一条数据需要两个路由,两个视图类,以下可以合并成一个视图类，一个路由==========
+#### 13、通过视图集解决多路由,多视图类问题
+```python
+# 视图集
+from rest_framework.viewsets import ModelViewSet
+
+class BookView(ModelViewSet):
+    queryset = Book.objects
+    serializer_class = BookSerializer
+
+# 路由,可以生成默认的增删改查路由
+from rest_framework import routers
+router = routers.DefaultRouter()
+router.register('book', BookView, base_name='book')
+# 添加路由有两种方式
+urlpatterns = [
+    ...
+]
+urlpatterns += router.urls
+# 或
+urlpatterns = [
+    ...
+    path('^', include(router.urls))
+]
+# 增加自定义路由
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+
+class BookView(ModelViewSet):
+    queryset = Book.objects
+    serializer_class = BookSerializer
+    """
+    action装饰器的作用：告诉路由类给视图集的自定义方法生成路由信息
+    methods, 列表，允许哪些http请求能访问当前视图方法
+    detail，布尔，生成路由时是否拼接pk参数
+            detail为True，表示路径名格式应该为 book/{pk}/login/
+    url_path，字符串，生成路由时末尾路由路径，如果没有声明，则自动以当前方法名作为路由尾缀
+    
+    """
+    @action(methods=['get'], detail=True,url_path="login")
+    def login(self, request,pk):
+        """登录"""
+        return Response({"msg":request.method})
+
+    # detail为False 表示路径名格式应该为 book/get_new_5/
+    @action(methods=['get'], detail=False)
+    def get_new_5(self, request):
+        """获取最新添加的5本书"""
+        ...
 ```
 
 
