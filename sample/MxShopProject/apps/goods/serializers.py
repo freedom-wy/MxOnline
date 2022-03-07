@@ -2,6 +2,12 @@ from rest_framework import serializers
 from apps.goods.models import Goods, GoodsCategory
 
 
+class GoodsSerializerDemoSource(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    goods_brief = serializers.CharField(max_length=500)
+    goods_front_image = serializers.ImageField()
+
+
 class CategorySerializerDemo(serializers.ModelSerializer):
     class Meta:
         model = GoodsCategory

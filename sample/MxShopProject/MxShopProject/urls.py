@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 # 通过django的serializers对模型类数据进行序列化并向前端返回数据
-from apps.goods.views import GoodsListViewSource, GoodsListViewDemo, GoodsListViewSet
+from apps.goods.views import GoodsListViewSource, GoodsListViewDemo, GoodsListViewSet, GoodsApiViewSource
 from rest_framework.routers import DefaultRouter
 # from apps.students.views import StudentViewSet, StudentView, StudentApiView, StudentGenericAPIView, StudentGenericAPIViewPk
 # from apps.students.views import StudentsListView
@@ -34,7 +34,7 @@ urlpatterns = [
     # 仅是在api接口页面上显示一个登录按钮?
     path('api-auth/', include('rest_framework.urls')),
     # # 原始json数据返回方法
-    # path("goods_source/", GoodsListViewSource.as_view(), name="goods_source"),
+    path("goods_source/", GoodsApiViewSource.as_view(), name="goods_source"),
     # # drf返回json数据方法
     # path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo"),
     # path("students_source/", StudentView.as_view(), name="students_source"),

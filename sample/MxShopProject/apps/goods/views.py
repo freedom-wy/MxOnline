@@ -6,7 +6,7 @@ from django.core import serializers
 
 # 使用django rest framework向前端返回json数据方法
 from rest_framework.response import Response
-# from rest_framework.views import APIView
+from rest_framework.views import APIView
 from .serializers import GoodsSerializerDemo
 
 # 使用generics封装serializer数据
@@ -15,6 +15,15 @@ from rest_framework.pagination import PageNumberPagination
 
 # 使用viewset封装serializer数据
 from rest_framework import mixins, viewsets
+
+
+# 使用restframework向前端提供Json数据
+class GoodsApiViewSource(APIView):
+    def get(self, request):
+        from .serializers import GoodsSerializerDemoSource
+        goods = Goods.objects.all()
+        goods_serializer = GoodsSerializerDemoSource(goods, many=True)
+        return Response(data=goods_serializer.data)
 
 
 class GoodsListViewSource(View):
