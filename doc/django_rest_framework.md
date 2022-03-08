@@ -408,6 +408,93 @@ router.register("book",views.BookView)
 print( router.urls )
 urlpatterns += router.urls
 ```
+#### 20、过滤,安装django-filter包并在settings中注册应用
+```python
+INSTALLED_APPS = [
+    # 过滤应用
+    "django_filters"
+]
+
+# 设置全局过滤规则
+REST_FRAMEWORK = {
+    # 过滤
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
+    ]
+}
+
+# 在视图中设置过滤字段
+filter_fields = ["name", "goods_brief"]
+# 访问时需全字匹配,否则过滤失效
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+class GoodsListViewSet(ModelViewSet):
+    queryset = Goods.objects.all()
+    serializer_class = GoodsSerializerDemo
+    # 在视图中单独使用过滤器
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ["name", "goods_brief"]
+```
+#### 21、排序
+```python
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+
+
+class GoodsListViewSet(ModelViewSet):
+    queryset = Goods.objects.all()
+    serializer_class = GoodsSerializerDemo
+    # 在视图中单独使用过滤器
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_fields = ["name", "goods_brief"]
+    # 排序
+    ordering_fields = ["id", "shop_price"]
+
+# 全局使用
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": [
+        # 过滤
+        "django_filters.rest_framework.DjangoFilterBackend",
+        # 排序
+        "rest_framework.filters.OrderingFilter"
+    ]
+}
+```
+#### 22、分页
+```python
+# 全局分页, PageNumberPagination和LimitOffsetPagination
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS':  'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100  # 每页数目
+}
+# 视图单独分页
+class StudentPageNumberPagination(PageNumberPagination):
+    page_query_param = "page" # 查询字符串中代表页码的变量名
+    page_size_query_param = "size" # 查询字符串中代表每一页数据的变量名
+    page_size = 2 # 每一页的数据量
+    max_page_size = 4 # 允许客户端通过查询字符串调整的最大单页数据量
+
+class Student3ModelViewSet(ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentModelSerializer
+    # 取消当前视图类的分页效果
+    # pagination_class = None
+    # 局部分页
+    pagination_class = StudentPageNumberPagination
+
+# 取消分页
+class GoodsListViewSet(ModelViewSet):
+    queryset = Goods.objects.all()
+    serializer_class = GoodsSerializerDemo
+    # 在视图中单独使用过滤器
+    # filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_fields = ["name", "goods_brief"]
+    ordering_fields = ["id", "shop_price"]
+    # 当pagination_class为None, 该视图不分页
+    # pagination_class = None
+```
 
 
 
