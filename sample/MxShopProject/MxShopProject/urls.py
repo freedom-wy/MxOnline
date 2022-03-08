@@ -19,23 +19,25 @@ from django.urls import path, include, re_path
 from apps.goods.views import GoodsListViewSource, GoodsListViewDemo, GoodsListViewSet, GoodsApiViewSource
 from rest_framework.routers import DefaultRouter
 # from apps.students.views import StudentViewSet, StudentView, StudentApiView, StudentGenericAPIView, StudentGenericAPIViewPk
-# from apps.students.views import StudentsListView
-from apps.students.views import StudentViewSet
+from apps.students.views import StudentsListView
+# from apps.students.views import StudentViewSet
+# from apps.students.views import StudentTestView
 
 
 # 实例化路由并注册
 router = DefaultRouter()
 # router.register("goods_set", GoodsListViewSet)
 # 不能使用正则
-router.register("student_set", StudentViewSet)
+# router.register("student_set", StudentViewSet)
+router.register("student_test", StudentsListView)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # 仅是在api接口页面上显示一个登录按钮?
-    path('api-auth/', include('rest_framework.urls')),
-    # # 原始json数据返回方法
-    path("goods_source/", GoodsApiViewSource.as_view(), name="goods_source"),
-    # # drf返回json数据方法
+    # path('admin/', admin.site.urls),
+    # # 仅是在api接口页面上显示一个登录按钮?
+    # path('api-auth/', include('rest_framework.urls')),
+    # # # 原始json数据返回方法
+    # path("goods_source/", GoodsApiViewSource.as_view(), name="goods_source"),
+    # # # drf返回json数据方法
     # path("goods_demo/", GoodsListViewDemo.as_view(), name="goods_demo"),
     # path("students_source/", StudentView.as_view(), name="students_source"),
     # path("student_api/", StudentApiView.as_view(), name="student_api"),

@@ -198,7 +198,7 @@ from rest_framework.response import Response
 from rest_framework import status
 ```
 #### 9、rest_framework继承了APIView,注册路由时与继承View相同,path("student_api/", StudentApiView.as_view(), name="student_api")
-#### 10、GenericAPIView通用视图类
+#### 10、GenericAPIView通用视图类,需要显性的编写get,post等方法,显性执行save等操作
 ```python
 # serializer_class 类属性,指明视图使用的序列化器类
 # queryset 类属性,指明使用的数据查询集,model查询数据
@@ -235,7 +235,7 @@ class StudentGenericAPIView(GenericAPIView):
         serializer2 = self.get_serializer(instance=instance)
         return Response(serializer2.data)
 ```
-#### 11、5个视图扩展类
+#### 11、5个视图扩展类,需要和GenericAPIView配合使用,5个视图扩展类简化了原GenericAPIView中get,post等方法的复杂代码
 ```python
 # 获取多条数据
 from rest_framework.mixins import ListModelMixin
@@ -271,9 +271,9 @@ class StudentsListView(ListModelMixin, GenericAPIView, CreateModelMixin):
         return self.list(request)
 
     def post(self, request):
-        return self
+        return self.create(request)
 ```
-#### 12、GenericAPIView的视图子类
+#### 12、GenericAPIView的视图子类,更加简化代码,仅需定义queryset = Student.objects.all(), serializer_class = StudentModelSerializer
 ```python
 """
 1）CreateAPIView
@@ -313,54 +313,79 @@ class Student3GenericAPIView(RetrieveUpdateDestroyAPIView):
 ```
 #### ============以上视图类的访问所有数据和访问一条数据需要两个路由,两个视图类,以下可以合并成一个视图类，一个路由==========
 #### 13、通过视图集解决多路由,多视图类问题
+#### 14、ViewSet主要通过继承ViewSetMixin来实现在调用as_view()时传入字典{“http请求”：“视图方法”}的映射处理工作，如{‘get’:‘list’}
+#### 15、ViewSet视图集类不再限制视图方法名只允许get()、post()等这种情况了，而是实现允许开发者根据自己的需要定义自定义方法名，例如 list() 、create() 等，然后经过路由中使用http和这些视图方法名进行绑定调用
 ```python
-# 视图集
-from rest_framework.viewsets import ModelViewSet
+from django.urls import path, re_path
 
-class BookView(ModelViewSet):
-    queryset = Book.objects
-    serializer_class = BookSerializer
+from vset.views import BookView
 
-# 路由,可以生成默认的增删改查路由
-from rest_framework import routers
-router = routers.DefaultRouter()
-router.register('book', BookView, base_name='book')
-# 添加路由有两种方式
 urlpatterns = [
-    ...
+    # path("set", views.BookView.as_view({"http请求":"视图方法"})),
+    path("books/", BookView.as_view({
+        "get": "get_all_book",
+        "post": "add_book"
+    })),
+    re_path("^books/(?P<pk>\d+)$", BookView.as_view({
+        "get": "get_one_book",
+        "put": "edit_book",
+        "delete": "delete",
+    })),
 ]
-urlpatterns += router.urls
-# 或
-urlpatterns = [
-    ...
-    path('^', include(router.urls))
-]
-# 增加自定义路由
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import action
-
-class BookView(ModelViewSet):
-    queryset = Book.objects
-    serializer_class = BookSerializer
-    """
-    action装饰器的作用：告诉路由类给视图集的自定义方法生成路由信息
-    methods, 列表，允许哪些http请求能访问当前视图方法
-    detail，布尔，生成路由时是否拼接pk参数
-            detail为True，表示路径名格式应该为 book/{pk}/login/
-    url_path，字符串，生成路由时末尾路由路径，如果没有声明，则自动以当前方法名作为路由尾缀
-    
-    """
-    @action(methods=['get'], detail=True,url_path="login")
-    def login(self, request,pk):
-        """登录"""
-        return Response({"msg":request.method})
-
-    # detail为False 表示路径名格式应该为 book/get_new_5/
-    @action(methods=['get'], detail=False)
-    def get_new_5(self, request):
-        """获取最新添加的5本书"""
-        ...
 ```
+
+```python
+from rest_framework import serializers
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
+
+from sers.models import Book
+
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = "__all__"
+
+
+class BookView(ViewSet):
+
+    def get_all_book(self, request):
+
+        books = Book.objects.all()
+        bs = BookSerializer(instance=books, many=True)
+        return Response(bs.data)
+
+    def add_book(self, request):
+        bs = BookSerializer(data=request.data)
+        if bs.is_valid():
+            bs.save()
+            return Response(bs.data)
+        else:
+            return Response(bs.errors)
+
+    def get_one_book(self, request, pk):
+        book = Book.objects.get(pk=pk)
+        bs = BookSerializer(instance=book)
+        return Response(bs.data)
+
+    def edit_book(self, request, pk):
+        instance = Book.objects.get(pk=pk)
+        bs = BookSerializer(instance=instance, data=request.data)
+        if bs.is_valid():
+            bs.save()
+            return Response(bs.data)
+        else:
+            return Response(bs.errors)
+
+    def delete(self, request, pk):
+        Book.objects.get(pk=pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+```
+#### 16、GenericViewSet继承自GenericAPIView和ViewSetMixin，GenericAPIView需要显性编写get,post等方法,显性执行save等操作,ViewSetMixin在as_view中自定义路由
+#### 17、GenericViewSet可以和5个视图扩展类结合使用,这样可以不用定义get,post等方法,仅定义serialize和queryset即可
+#### 18、ModelViewSet继承自GenericViewSet，同时包括了ListModelMixin、RetrieveModelMixin、CreateModelMixin、UpdateModelMixin、DestoryModelMixin
 
 
 
