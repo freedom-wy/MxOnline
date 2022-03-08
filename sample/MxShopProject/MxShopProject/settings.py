@@ -141,3 +141,13 @@ MEDIA_URL = "/media/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+"""drf配置信息必须全部写在REST_FRAMEWORK配置项中"""
+REST_FRAMEWORK = {
+    # 配置认证方式的选项【drf的认证是内部循环遍历每一个注册的认证类，一旦认证通过识别到用户身份，则不会继续循环】
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'apps.goods.authentication.CustomAuthentication',          # 自定义认证
+        'rest_framework.authentication.SessionAuthentication',  # session认证
+        'rest_framework.authentication.BasicAuthentication',    # 基本认证
+    )
+}

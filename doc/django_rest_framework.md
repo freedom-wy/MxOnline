@@ -386,7 +386,28 @@ class BookView(ViewSet):
 #### 16、GenericViewSet继承自GenericAPIView和ViewSetMixin，GenericAPIView需要显性编写get,post等方法,显性执行save等操作,ViewSetMixin在as_view中自定义路由
 #### 17、GenericViewSet可以和5个视图扩展类结合使用,这样可以不用定义get,post等方法,仅定义serialize和queryset即可
 #### 18、ModelViewSet继承自GenericViewSet，同时包括了ListModelMixin、RetrieveModelMixin、CreateModelMixin、UpdateModelMixin、DestoryModelMixin
+#### 19、路由
+```python
+from django.urls import path, re_path
+from . import views
+urlpatterns = [
+    ...
+]
 
+"""使用drf提供路由类router给视图集生成路由列表"""
+# 实例化路由类
+# drf提供一共提供了两个路由类给我们使用,他们用法一致,功能几乎一样
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+
+# 注册视图集
+# router.register("路由前缀",视图集类)
+router.register("book",views.BookView)
+
+# 把生成的路由列表追加到urlpatterns
+print( router.urls )
+urlpatterns += router.urls
+```
 
 
 
