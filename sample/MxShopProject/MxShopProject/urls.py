@@ -15,14 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-# 通过django的serializers对模型类数据进行序列化并向前端返回数据
-from apps.goods.views import GoodsListViewSet
 from rest_framework.routers import DefaultRouter
+from apps.goods.views import CategoryViewset
 
 
 # 实例化路由并注册
 router = DefaultRouter()
-router.register("goods", GoodsListViewSet)
+router.register("categorys", CategoryViewset, basename="categorys")
 
 
 urlpatterns = [
@@ -32,4 +31,4 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path("", include(router.urls))
 ]
-print(router.urls)
+# print(router.urls)

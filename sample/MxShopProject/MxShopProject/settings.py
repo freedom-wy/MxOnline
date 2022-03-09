@@ -46,10 +46,13 @@ INSTALLED_APPS = [
     # 用于测试的app
     "apps.students.apps.StudentsConfig",
     # 过滤应用
-    "django_filters"
+    "django_filters",
+    # 解决跨域问题
+    "corsheaders"
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'MxShopProject.urls'
 
@@ -144,14 +149,14 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-"""drf配置信息必须全部写在REST_FRAMEWORK配置项中"""
-REST_FRAMEWORK = {
-    "DEFAULT_FILTER_BACKENDS": [
-        # 过滤
-        "django_filters.rest_framework.DjangoFilterBackend",
-        # 排序
-        "rest_framework.filters.OrderingFilter"
-    ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 10
-}
+# """drf配置信息必须全部写在REST_FRAMEWORK配置项中"""
+# REST_FRAMEWORK = {
+#     "DEFAULT_FILTER_BACKENDS": [
+#         # 过滤
+#         "django_filters.rest_framework.DjangoFilterBackend",
+#         # 排序
+#         "rest_framework.filters.OrderingFilter"
+#     ],
+#     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+#     "PAGE_SIZE": 10
+# }

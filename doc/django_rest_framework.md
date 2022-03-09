@@ -495,6 +495,21 @@ class GoodsListViewSet(ModelViewSet):
     # 当pagination_class为None, 该视图不分页
     # pagination_class = None
 ```
+#### 23、解决跨域问题
+#### 同源策略/SOP（Same origin policy）是一种约定，是浏览器的一种安全机制。这里同源需要"协议+域名+端口"三者都相同，否则不能进行Ajax访问。
+```text
+pip install django-cors-headers
+# 注册应用
+INSTALLED_APPS = (
+    'corsheaders',
+)
+# 添加中间件
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', #最好添加至第一行
+]
+# 配置白名单
+CORS_ORIGIN_ALLOW_ALL = True 默认为False
+```
 
 
 
