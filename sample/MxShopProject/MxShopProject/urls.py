@@ -16,12 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
-from apps.goods.views import CategoryViewset
+from apps.goods.views import CategoryViewset, GoodsListViewSet
+# 显示商品图片
+from MxShopProject.settings import MEDIA_ROOT
+from django.views.static import serve
 
 
 # 实例化路由并注册
 router = DefaultRouter()
+# 商品分类
 router.register("categorys", CategoryViewset, basename="categorys")
+# 商品
+router.register("goods", GoodsListViewSet, basename="goods")
 
 
 urlpatterns = [
@@ -29,6 +35,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # 仅是在api接口页面上显示一个登录按钮?
     path('api-auth/', include('rest_framework.urls')),
+    # 商品图片路由
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
     path("", include(router.urls))
 ]
 # print(router.urls)
