@@ -120,6 +120,43 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 admin.site.register(UserProfile, UserProfileAdmin)
 ```
+#### 8、cookie和session
+```text
+cookie
+Cookie规范-默认
+1、Cookie大小上限为4KB； 
+2、一个服务器最多在客户端浏览器上保存20个Cookie； 
+3、一个浏览器最多保存300个Cookie，因为一个浏览器可以访问多个服务器。
+4、cookie是基于域名安全的,一个域名可以对应多个cookie,一个cookie对应一个域名
+5、cookie有过期时间,如果不指定,默认关闭浏览器后cookie就会过期
+
+设置cookie
+response.set_signed_cookie("login", "yase", salt="abcd1234")
+获取cookie
+request.get_signed_cookie("login", salt="abcd1234", default=None)
+
+session
+一个网站对一个浏览器，是一个sessionid的，换一个浏览器客户端，肯定会生成另外一个sessionid，django-session表里面的session_key肯定不同，但是session_data字段的数据肯定是一样的，当然了，这个还要看人家的加密规则。
+1、浏览器访问服务器,服务器生成session信息,session信息包含两部分key和value,key为sessionid,将以cookie值得形式返回给浏览器,value将存储到django_session表中
+2、浏览器携带sessionid的cookie访问web应用,服务器从cookie中取出sessionid,并查库,将信息附加到request对象中
+def set_session(request):
+    request.session["hello"] = "world"
+    return HttpResponse("设置session")
+
+
+def get_session(request):
+    session_value = request.session.get("hello", "")
+    return HttpResponse(session_value)
+
+清除session
+request.session.flush()
+设置session过期时间
+设置会话的超时时间，如果没有指定过期时间则两个星期后过期。
+如果value是一个整数，会话将在value秒没有活动后过期。
+如果value为0，那么用户会话的Cookie将在用户的浏览器关闭时过期。
+如果value为None，那么会话永不过期。
+request.session.set_expiry(value)
+```
 
 
 
