@@ -157,7 +157,74 @@ request.session.flush()
 如果value为None，那么会话永不过期。
 request.session.set_expiry(value)
 ```
+#### 9、django生命周期
+```text
+1、浏览器发送请求到wsgi
+2、wsgi转发请求到中间件的process_request方法,按照中间件的顺序,顺序执行
+3、经过中间件后到url控制器,转发到视图
+4、在视图中返回响应
+5、到中间件的process_response方法,按照中间件的顺序,顺序执行
+6、封装为response返回到浏览器
+```
+#### 10、中间件
+```text
+中间件可以定义五个方法
+1、process_request
+2、process_view(self, request, view_func, view_args, view_kwargs)
+3、process_template_response(self,request,response)
+4、process_exception(self, request, exception)
+5、process_response(self, request, response)
+以上方法的返回值可以是None或一个HttpResponse对象，如果是None，则继续按照django定义的规则向后继续执行，如果是HttpResponse对象，则直接将该对象返回给用户。
+```
+```python
+# 自定义中间件
+from django.utils.deprecation import MiddlewareMixin
 
+class MD1(MiddlewareMixin):
+    #自定义中间件，不是必须要有下面这两个方法，有request方法说明请求来了要处理，有response方法说明响应出去时需要处理，不是非要写这两个方法，如果你没写process_response方法，那么会一层一层的往上找，哪个中间件有process_response方法就将返回对象给哪个中间件
+    def process_request(self, request):
+        print("MD1里面的 process_request")
+
+    def process_response(self, request, response):
+        print("MD1里面的 process_response")
+        return response
+```
+```text
+中间件的process_request方法是在执行视图函数之前执行的。
+当配置多个中间件时，会按照MIDDLEWARE中的注册顺序，也就是列表的索引值，从前到后依次执行的。
+不同中间件之间传递的request都是同一个对象
+多个中间件中的process_response方法是按照MIDDLEWARE中的注册顺序倒序执行的，也就是说第一个中间件的process_request方法首先执行，而它的process_response方法最后执行，最后一个中间件的process_request方法最后一个执行，它的process_response方法是最先执行。
+```
+```text
+process_response,process_response方法是在视图函数之后执行的
+它有两个参数，一个是request，一个是response，request就是上述例子中一样的对象，response是视图函数返回的HttpResponse对象。该方法的返回值也必须是HttpResponse对象。
+from django.utils.deprecation import MiddlewareMixin
+
+
+class MD1(MiddlewareMixin):
+
+    def process_request(self, request):
+        print("MD1里面的 process_request")
+        #不必须写return值
+    def process_response(self, request, response):#request和response两个参数必须有，名字随便取
+        print("MD1里面的 process_response")        #print(response.__dict__['_container'][0].decode('utf-8')) #查看响应体里面的内容的方法，或者直接使用response.content也可以看到响应体里面的内容，由于response是个变量，直接点击看源码是看不到的，你打印type(response)发现是HttpResponse对象，查看这个对象的源码就知道有什么方法可以用了。
+　　　　 return response  #必须有返回值，写return response  ，这个response就像一个接力棒一样
+        #return HttpResponse('瞎搞') ,如果你写了这个，那么你视图返回过来的内容就被它给替代了
+
+class MD2(MiddlewareMixin):
+    def process_request(self, request):
+        print("MD2里面的 process_request")
+        pass
+
+    def process_response(self, request, response): #request和response两个参数必须要有，名字随便取
+        print("MD2里面的 process_response") 
+        return response  #必须返回response，不然你上层的中间件就没有拿到httpresponse对象，就会报错
+```
+```text
+process_view方法是在process_request之后，reprocess_response之前，路由之后，视图函数之前执行的，执行顺序按照MIDDLEWARE中的注册顺序从前到后顺序执行的
+process_exception 在process_view之后，只有在视图函数中出现异常了才执行，多个process_exception中间件，倒叙执行。
+它返回的值可以是一个None也可以是一个HttpResponse对象。如果是HttpResponse对象，Django将调用模板和中间件中的process_response方法，并返回给浏览器，否则将默认处理异常。如果返回一个None，则交给下一个中间件的process_exception方法来处理异常。它的执行顺序也是按照中间件注册顺序的倒序执行。
+```
 
 
 
