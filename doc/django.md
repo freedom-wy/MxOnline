@@ -225,11 +225,6 @@ process_view方法是在process_request之后，reprocess_response之前，路�
 process_exception 在process_view之后，只有在视图函数中出现异常了才执行，多个process_exception中间件，倒叙执行。
 它返回的值可以是一个None也可以是一个HttpResponse对象。如果是HttpResponse对象，Django将调用模板和中间件中的process_response方法，并返回给浏览器，否则将默认处理异常。如果返回一个None，则交给下一个中间件的process_exception方法来处理异常。它的执行顺序也是按照中间件注册顺序的倒序执行。
 ```
-
-
-
-
-
 #### 11、jwt
 ```text
 传统token方式
@@ -238,3 +233,75 @@ process_exception 在process_view之后，只有在视图函数中出现异常�
 jwt方式
 用户登录成功后，服务端通过jwt生成一个随机token给用户（服务端无需保留token），以后用户再来访问时需携带token，服务端接收到token之后，通过jwt对token进行校验是否超时、是否合法。
 ```
+#### 12、通过中间件进行Jwt验证
+```python
+# 1、校验用户后生成token
+def create_token(self, payload):
+    jwt_salt = "abcd1234567890!@#$%^&*()"
+    import datetime
+    import jwt
+    headers = {
+        "typ": "jwt",
+        "alg": "HS256"
+    }
+    # 过期时间
+    payload["exp"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
+    token = jwt.encode(payload=payload, key=jwt_salt, algorithm="HS256", headers=headers)
+    return token
+# 接收用户发送过来的请求,校验token,中间件逻辑
+from django.utils.deprecation import MiddlewareMixin
+from django.http import JsonResponse
+
+
+def parse_payload(token):
+    """
+    验证token
+    :param token:
+    :return:
+    """
+    import jwt
+    jwt_salt = "abcd1234567890!@#$%^&*()"
+    result = {"status": False, "data": None, "error": None}
+    try:
+        verified_payload = jwt.decode(token, jwt_salt, "HS256")
+    except jwt.exceptions.ExpiredSignatureError:
+        result["error"] = "token已过期"
+    except jwt.exceptions.DecodeError:
+        result["error"] = "token认证失败"
+    except jwt.exceptions.InvalidTokenError:
+        result["error"] = "非法token"
+    else:
+        result["status"] = True
+        result["data"] = verified_payload
+    return result
+
+
+class JwtAuthorizationMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        """
+        定义jwt验证的中间件
+        :param request:
+        :return:
+        """
+        if request.path_info == "/get_token/" and request.method == "POST":
+            return
+        elif request.path_info == "/get_token/" and request.method == "GET":
+            authorization = request.META.get("HTTP_AUTHORIZATION", "")
+            authorization_info = authorization.split()
+            if not authorization_info:
+                return JsonResponse({"error": "未获取到token", "status": False})
+            elif authorization_info[0].lower() != "jwt":
+                return JsonResponse({"error": "token认证方式错误", "status": False})
+            elif len(authorization_info) == 1 or len(authorization_info) > 2:
+                return JsonResponse({"error": "非法token", "status": False})
+            token = authorization_info[1]
+            print(token)
+            result = parse_payload(token)
+            if not result["status"]:
+                return JsonResponse(result)
+            request.user_info = result["data"]
+# 3、在视图中获取payload
+# 4、注意要在settings中添加该中间件
+```
+
+
