@@ -43,14 +43,12 @@ INSTALLED_APPS = [
     "apps.user_operation.apps.UserOperationConfig",
     # 引入django rest framework应用
     "rest_framework",
-    # 用于测试的app
-    "apps.students.apps.StudentsConfig",
     # 过滤应用
     "django_filters",
     # 解决跨域问题
     "corsheaders",
     # drf默认的token认证方式
-    "rest_framework.authtoken"
+    # "rest_framework.authtoken"
 ]
 
 MIDDLEWARE = [
@@ -162,6 +160,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        "rest_framework.authentication.TokenAuthentication"
+        # "rest_framework.authentication.TokenAuthentication"
     )
 }
