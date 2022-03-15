@@ -20,7 +20,8 @@ from apps.goods.views import CategoryViewset, GoodsListViewSet
 # 显示商品图片
 from MxShopProject.settings import MEDIA_ROOT
 from django.views.static import serve
-
+# jwt验证
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # 实例化路由并注册
 router = DefaultRouter()
@@ -29,12 +30,13 @@ router.register("categorys", CategoryViewset, basename="categorys")
 # 商品
 router.register("goods", GoodsListViewSet, basename="goods")
 
-
 urlpatterns = [
     # django原生的admin管理后台
     path('admin/', admin.site.urls),
     # 仅是在api接口页面上显示一个登录按钮?
     path('api-auth/', include('rest_framework.urls')),
+    # jwt验证
+    path("get_token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     # 商品图片路由
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
     path("", include(router.urls))
