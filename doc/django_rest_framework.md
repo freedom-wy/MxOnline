@@ -510,7 +510,28 @@ MIDDLEWARE = [
 # 配置白名单
 CORS_ORIGIN_ALLOW_ALL = True 默认为False
 ```
-
+#### 24、使用drf默认的token认证方案
+```python
+# 1、在settings中注册应用
+INSTALLED_APPS = [
+    # drf默认的token认证方式
+    "rest_framework.authtoken"
+]
+# 2、在settings中添加认证方式
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework.authentication.TokenAuthentication"
+    )
+}
+# 3、配置创建token的路由
+urlpatterns = [
+    # drf默认申请token接口
+    path("api-token-auth/", views.obtain_auth_token),
+]
+# 4、访问应用路由时需要配置请求头 Authorization, Token d7872e08f534682118acba5aa34945edd029f86c
+```
 
 
 

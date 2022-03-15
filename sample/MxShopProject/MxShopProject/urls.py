@@ -20,6 +20,7 @@ from apps.goods.views import CategoryViewset, GoodsListViewSet
 # 显示商品图片
 from MxShopProject.settings import MEDIA_ROOT
 from django.views.static import serve
+from rest_framework.authtoken import views
 
 
 # 实例化路由并注册
@@ -28,6 +29,8 @@ router = DefaultRouter()
 router.register("categorys", CategoryViewset, basename="categorys")
 # 商品
 router.register("goods", GoodsListViewSet, basename="goods")
+from apps.goods.views import AuthDemo
+router.register("auth", AuthDemo, basename="auth")
 
 
 urlpatterns = [
@@ -35,6 +38,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # 仅是在api接口页面上显示一个登录按钮?
     path('api-auth/', include('rest_framework.urls')),
+    # drf默认申请token接口
+    path("api-token-auth/", views.obtain_auth_token),
     # 商品图片路由
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
     path("", include(router.urls))
