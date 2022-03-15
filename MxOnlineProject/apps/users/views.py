@@ -56,6 +56,37 @@ class Logout(View):
     """
     退出
     """
+
     def get(self, request):
         logout(request)
         return HttpResponseRedirect(reverse("index"))
+
+
+class JwtDemo(View):
+    def create_token(self, payload):
+        jwt_salt = "abcd1234567890!@#$%^&*()"
+        import datetime
+        import jwt
+        headers = {
+            "typ": "jwt",
+            "alg": "HS256"
+        }
+        # 过期时间
+        payload["exp"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
+        token = jwt.encode(payload=payload, key=jwt_salt, algorithm="HS256", headers=headers)
+        return token
+
+    def post(self, request):
+        from django.http import JsonResponse
+        user = request.POST.get("username")
+        pwd = request.POST.get("password")
+
+        if user == "test1" and pwd == "abcd1234":
+            token = self.create_token({"username": "test1"})
+            return JsonResponse({"status": True, "token": token})
+        return JsonResponse({"status": False, "error": "用户名或密码错误"})
+
+    def get(self, request):
+        from django.http import JsonResponse
+        print(request.user_info)
+        return JsonResponse({"data": "验证后的页面"})

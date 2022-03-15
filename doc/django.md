@@ -229,3 +229,12 @@ process_exception 在process_view之后，只有在视图函数中出现异常�
 
 
 
+
+#### 11、jwt
+```text
+传统token方式
+用户登录成功后，服务端生成一个随机token给用户，并且在服务端(数据库或缓存)中保存一份token，以后用户再来访问时需携带token，服务端接收到token之后，去数据库或缓存中进行校验token的是否超时、是否合法。
+
+jwt方式
+用户登录成功后，服务端通过jwt生成一个随机token给用户（服务端无需保留token），以后用户再来访问时需携带token，服务端接收到token之后，通过jwt对token进行校验是否超时、是否合法。
+```

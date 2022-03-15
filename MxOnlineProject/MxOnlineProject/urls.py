@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 # 导入视图
-from apps.users.views import LoginView, IndexView, Logout
+from apps.users.views import LoginView, IndexView, Logout, JwtDemo
 from django.urls import include
 
 
@@ -28,5 +28,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", Logout.as_view(), name="logout"),
     # 添加验证码路由
-    path("captcha/", include("captcha.urls"))
+    path("captcha/", include("captcha.urls")),
+    # 通过jwt验证demo
+    path("get_token/", JwtDemo.as_view(), name="get_token")
 ]
