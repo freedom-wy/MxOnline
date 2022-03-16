@@ -55,9 +55,7 @@ MIDDLEWARE = [
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 自定义token验证
-    "apps.users.middlewares.JwtAuthorizationMiddleware"
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'MxOnlineProject.urls'
