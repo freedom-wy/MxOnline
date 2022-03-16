@@ -13,7 +13,10 @@ class LoginForm(forms.Form):
 
 class DynamicLoginForm(forms.Form):
     """
-    动态图片验证码校验
+    动态图片验证码和手机号校验
     """
+    # 图片验证码
     captcha = CaptchaField()
+    # 手机号
+    mobile = forms.CharField(required=True, min_length=11, max_length=11)
 

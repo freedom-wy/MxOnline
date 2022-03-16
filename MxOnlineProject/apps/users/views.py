@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.views.generic.base import View
 from django.contrib.auth import authenticate, login, logout
 # HttpResponseRedirect跳转
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 # reverse通过url中设置的name找到url
 from django.urls import reverse
 from .forms import LoginForm, DynamicLoginForm
+from apps.utils.random_code import generate_random
 
 
 class IndexView(View):
@@ -60,3 +61,20 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return HttpResponseRedirect(reverse("index"))
+
+
+class SendSmsView(View):
+    """
+    发送短信验证码和校验图片验证码
+    """
+    def post(self, request):
+        send_sms_form = DynamicLoginForm(request.POST)
+        re_dict = {}
+        if send_sms_form.is_valid():
+            # 生成验证码并发送
+            sms_code = generate_random(4)
+            pass
+        else:
+            for key, value in send_sms_form.errors.items():
+                re_dict[key] = value[0]
+        return JsonResponse(re_dict)
