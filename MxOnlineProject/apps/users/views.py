@@ -5,8 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, JsonResponse
 # reverse通过url中设置的name找到url
 from django.urls import reverse
-from .forms import LoginForm, DynamicLoginForm
-from apps.utils.random_code import generate_random
+from .forms import LoginForm, DynamicLoginForm, DynamicLoginPostForm
+from utils.random_code import generate_random
+from apps.users.models import PhoneCode, UserProfile
 
 
 class IndexView(View):
@@ -18,15 +19,56 @@ class IndexView(View):
         return render(request, "index.html")
 
 
+class DynamicLoginView(View):
+    """
+    手机验证码登录视图
+    """
+    def get(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("index"))
+        # 展示验证码
+        login_form = DynamicLoginForm()
+        return render(request, "login.html", {"login_form": login_form})
+
+    def post(self, request):
+        login_form = DynamicLoginPostForm(request.POST)
+        dynami_login = True
+        if login_form.is_valid():
+            mobile = login_form.cleaned_data.get("mobile")
+            # 查询用户表是否有该手机号,如果有则登录,如果没有则注册
+            existed_users = UserProfile.objects.filter(mobile=mobile)
+            if existed_users:
+                user = existed_users.first()
+            else:
+                # 注册账号
+                user = UserProfile(username=mobile)
+                # 生成随机密码
+                password = generate_random(10, 2)
+                user.set_password(password)
+                user.mobile = mobile
+                user.save()
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            # 手机验证码登录校验失败
+            d_form = DynamicLoginForm()
+            return render(request, "login.html", {
+                "login_form": login_form,
+                "d_form": d_form,
+                "dynamic_login": dynami_login
+            })
+
+
 class LoginView(View):
     """
-    登录视图
+    传统的用户名密码登录视图
     """
 
     def get(self, request):
         # 在登录页面,如果当前用户已登录则跳转到首页
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse("index"))
+        # 展示验证码
         login_form = DynamicLoginForm()
         return render(request, "login.html", {"login_form": login_form})
 
@@ -73,7 +115,15 @@ class SendSmsView(View):
         if send_sms_form.is_valid():
             # 生成验证码并发送
             sms_code = generate_random(4)
-            pass
+            # 模拟发送手机短信,永远发送成功
+            print(sms_code)
+            # 存储短信验证码,用于校验,此处使用redis最方便
+            # save_sms_code = PhoneCode(phone_num=send_sms_form.cleaned_data.get("mobile"), phone_code=sms_code)
+            save_sms_code = PhoneCode()
+            save_sms_code.phone_num = send_sms_form.cleaned_data.get("mobile")
+            save_sms_code.phone_code = sms_code
+            save_sms_code.save()
+            re_dict["status"] = "success"
         else:
             for key, value in send_sms_form.errors.items():
                 re_dict[key] = value[0]

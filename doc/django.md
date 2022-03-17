@@ -71,6 +71,10 @@ class Message(models.Model):
 ```
 #### 4、orm增删改查
 ```python
+# 设置主键 primary_key
+class PhoneCode(BaseModels):
+    phone_num = models.CharField(max_length=11, verbose_name="手机号码", primary_key=True)
+    phone_code = models.CharField(max_length=4, verbose_name="短信验证码")
 # save()方法,如无数据则插入,如有数据则更新
 ```
 #### 5、项目部署

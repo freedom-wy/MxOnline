@@ -1,7 +1,9 @@
 //刷新验证码
 function refresh_captcha(event){
     $.get("/captcha/refresh/?"+Math.random(), function(result){
+        // 在login.html页面上验证码图片的Url地址
         $('#jsRefreshCode img.captcha').attr("src",result.image_url);
+        // 在login.html页面上验证码的id值
         $('#id_captcha_0').attr("value",result.key);
     });
     return false;
@@ -120,6 +122,7 @@ $(function() {
             dataType:'json',
             url:"/send_sms/",
             data:{
+                // 从前端获取手机号码,验证码,验证码的id值
                 mobile:$inpRegMobile.val(),
                 "captcha_1":$inpRegCaptcha.val(),
                 "captcha_0":$('#id_captcha_0').val(),
