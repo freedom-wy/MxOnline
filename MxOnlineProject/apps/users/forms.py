@@ -1,7 +1,7 @@
 # 通过form进行验证
 from django import forms
 from captcha.fields import CaptchaField
-from .models import PhoneCode
+from .models import PhoneCode, UserProfile
 import datetime
 
 
@@ -13,7 +13,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(required=True, min_length=3)
 
 
-class RegisterForm(forms.Form):
+class RegisterGetForm(forms.Form):
     captcha = CaptchaField()
 
 
@@ -48,8 +48,20 @@ class DynamicLoginPostForm(forms.Form):
             code_info = code_info.first()
             now = datetime.datetime.now()
             exp_value = now - code_info.add_time
-            if exp_value.seconds > 60:
+            if exp_value.seconds > 5*60:
                 raise forms.ValidationError("验证码已过期")
-            return self.cleaned_data
+            return code
+
+
+class RegisterPostForm(DynamicLoginPostForm):
+    password = forms.CharField(required=True, min_length=10)
+
+    def clean_mobile(self):
+        mobile = self.data.get("mobile")
+        # 验证该手机号码是否已注册
+        users = UserProfile.objects.filter(mobile=mobile)
+        if users:
+            raise forms.ValidationError("该手机号码已注册")
+        return mobile
 
 

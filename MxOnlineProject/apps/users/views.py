@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, JsonResponse
 # reverse通过url中设置的name找到url
 from django.urls import reverse
-from .forms import LoginForm, DynamicLoginForm, DynamicLoginPostForm, RegisterForm
+from .forms import LoginForm, DynamicLoginForm, DynamicLoginPostForm, RegisterGetForm, RegisterPostForm
 from utils.random_code import generate_random
 from apps.users.models import PhoneCode, UserProfile
 
@@ -134,7 +134,27 @@ class RegisterView(View):
     def get(self, request):
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse("index"))
-        login_form = RegisterForm()
-        return render(request, "register.html", {"login_form": login_form})
+        register_get_form = RegisterGetForm()
+        return render(request, "register.html", {"register_get_form": register_get_form})
+
+    def post(self, request):
+        register_post_form = RegisterPostForm(request.POST)
+        if register_post_form.is_valid():
+            mobile = register_post_form.cleaned_data.get("mobile")
+            password = register_post_form.cleaned_data.get("password")
+            # 创建用户
+            user = UserProfile(username=mobile, mobile=mobile)
+            user.set_password(password)
+            user.save()
+            # 登录
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            register_get_form = RegisterGetForm()
+            return render(request, "register.html", {
+                "register_get_form": register_get_form,
+                "register_post_form": register_post_form
+            })
+
 
 
