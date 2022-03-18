@@ -13,6 +13,10 @@ class LoginForm(forms.Form):
     password = forms.CharField(required=True, min_length=3)
 
 
+class RegisterForm(forms.Form):
+    captcha = CaptchaField()
+
+
 class DynamicLoginForm(forms.Form):
     """
     动态图片验证码和手机号校验get请求

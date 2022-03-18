@@ -42,7 +42,7 @@
                 <li>服务电话：<span>33333333</span></li>
 {#                通过url方法查找login路由#}
                 <li class="active"><a href="{% url 'login' %}">[登录]</a></li>
-                <li><a href="register.html">[注册]</a></li>
+                <li><a href="{% url 'register' %}">[注册]</a></li>
             </ul>
         </div>
     </div>
@@ -118,7 +118,7 @@
                     </div>
                     <input class="btn btn-green" id="jsMobileRegBtn" type="button" value="立即登录">
                 </form>
-                <p class="form-p">没有慕学在线网帐号？<a href="register.html">[立即注册]</a></p>
+                <p class="form-p">没有慕学在线网帐号？<a href="{% url 'register' %}">[立即注册]</a></p>
             </div>
         </div>
     </div>

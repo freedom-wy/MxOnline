@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 # 导入视图
-from apps.users.views import LoginView, IndexView, Logout, SendSmsView, DynamicLoginView
+from apps.users.views import LoginView, IndexView, Logout, SendSmsView, DynamicLoginView, RegisterView
 from django.urls import include
 # 取消csrf验证
 from django.views.decorators.csrf import csrf_exempt
@@ -29,6 +29,8 @@ urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path("login/", LoginView.as_view(), name="login"),
     path('d_login/', DynamicLoginView.as_view(), name="d_login"),
+    # 注册
+    path("register/", RegisterView.as_view(), name="register"),
     path("logout/", Logout.as_view(), name="logout"),
     # 添加验证码路由
     path("captcha/", include("captcha.urls")),

@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, JsonResponse
 # reverse通过url中设置的name找到url
 from django.urls import reverse
-from .forms import LoginForm, DynamicLoginForm, DynamicLoginPostForm
+from .forms import LoginForm, DynamicLoginForm, DynamicLoginPostForm, RegisterForm
 from utils.random_code import generate_random
 from apps.users.models import PhoneCode, UserProfile
 
@@ -128,3 +128,13 @@ class SendSmsView(View):
             for key, value in send_sms_form.errors.items():
                 re_dict[key] = value[0]
         return JsonResponse(re_dict)
+
+
+class RegisterView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("index"))
+        login_form = RegisterForm()
+        return render(request, "register.html", {"login_form": login_form})
+
+
