@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from apps.goods.views import CategoryViewset, GoodsListViewSet
+from apps.users.views import SmsCodeViewset
 # 显示商品图片
 from MxShopProject.settings import MEDIA_ROOT
 from django.views.static import serve
@@ -29,6 +30,8 @@ router = DefaultRouter()
 router.register("categorys", CategoryViewset, basename="categorys")
 # 商品
 router.register("goods", GoodsListViewSet, basename="goods")
+# 短信验证码
+router.register("code", SmsCodeViewset, basename="code")
 
 urlpatterns = [
     # django原生的admin管理后台

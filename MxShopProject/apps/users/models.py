@@ -35,7 +35,7 @@ class VerifyCode(BaseModels):
     短信验证码
     """
     code = models.CharField(max_length=10, verbose_name="验证码")
-    mobile = models.CharField(max_length=11, verbose_name="手机号")
+    mobile = models.CharField(max_length=11, verbose_name="手机号", primary_key=True)
 
     class Meta:
         verbose_name = "验证码"
