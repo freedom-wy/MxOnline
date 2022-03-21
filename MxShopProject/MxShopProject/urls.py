@@ -33,7 +33,7 @@ router.register("goods", GoodsListViewSet, basename="goods")
 # 短信验证码
 router.register("code", SmsCodeViewset, basename="code")
 # 用户注册
-router.register("register", UserRegisterViewset, basename="register")
+router.register("users", UserRegisterViewset, basename="register")
 
 urlpatterns = [
     # django原生的admin管理后台
