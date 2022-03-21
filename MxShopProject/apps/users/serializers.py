@@ -40,7 +40,8 @@ class UserRegSerializer(serializers.ModelSerializer):
     # 添加一个模型类中没有的字段,write_only仅进行反序列化操作,不进行序列化操作
     code = serializers.CharField(required=True, max_length=4, min_length=4, help_text="验证码", write_only=True)
     # message是validator中的参数
-    username = serializers.CharField(validators=[UniqueValidator(queryset=User.objects.all(), message="用户已存在")], required=True, allow_blank=False, help_text="用户名")
+    username = serializers.CharField(validators=[UniqueValidator(queryset=User.objects.all(), message="用户已存在")],
+                                     required=True, allow_blank=False, help_text="用户名")
     # style将drf接口中提交数据样式设置为圆点
     password = serializers.CharField(help_text="密码", style={"input_type": "password"}, write_only=True)
 
@@ -67,8 +68,16 @@ class UserRegSerializer(serializers.ModelSerializer):
         attrs["mobile"] = attrs["username"]
         return attrs
 
-    # def create(self, validated_data):
-    #     pass
+    def create(self, validated_data):
+        """
+        调用父类的create方法
+        :param validated_data:
+        :return:
+        """
+        user = super(UserRegSerializer, self).create(validated_data=validated_data)
+        user.set_password(validated_data.get("password"))
+        user.save()
+        return user
 
     class Meta:
         model = User
