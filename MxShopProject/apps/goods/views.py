@@ -7,7 +7,6 @@ from .serializers import CategorySerializer, GoodsSerializer
 from .filters import GoodsFilter
 from rest_framework.pagination import PageNumberPagination
 
-
 class GoodsPagination(PageNumberPagination):
     # 每页显示条目
     page_size = 12
