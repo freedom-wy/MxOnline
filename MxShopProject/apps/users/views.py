@@ -7,7 +7,8 @@ from .models import VerifyCode
 from utils.random_code import generate_random
 from django.contrib.auth import get_user_model
 # 生成token
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your views here.
 
@@ -62,8 +63,9 @@ class UserRegisterViewset(CreateModelMixin, GenericViewSet):
         # 数据校验通过后,保存用户数据
         user = self.perform_create(serializer)
         # # 创建token
-        token = TokenObtainPairSerializer.get_token(user=user)
+        # token = TokenObtainPairSerializer.get_token(user=user)
         # print(token, type(token))
+        token = RefreshToken.for_user(user)
         access_token = token.access_token
         response_data = serializer.data
         response_data["token"] = str(access_token)

@@ -23,6 +23,7 @@ class UserFavViewset(CreateModelMixin, ListModelMixin, DestroyModelMixin, Generi
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     # SessionAuthentication用于web界面api接口, jwt用于postman中api接口
     authentication_classes = [JWTAuthentication, SessionAuthentication]
+    lookup_field = "goods_id"
 
     def get_queryset(self):
         """

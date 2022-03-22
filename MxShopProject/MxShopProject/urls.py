@@ -44,7 +44,7 @@ urlpatterns = [
     # 仅是在api接口页面上显示一个登录按钮?
     path('api-auth/', include('rest_framework.urls')),
     # jwt验证
-    path("get_token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     # 商品图片路由
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
     path("", include(router.urls))
