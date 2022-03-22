@@ -173,7 +173,18 @@ SIMPLE_JWT = {
 # 手机号码正则表达式
 REGEX_MOBILE = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
 
-# 缓存失效时间
-REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 5,
+# # 缓存失效时间
+# REST_FRAMEWORK_EXTENSIONS = {
+#     'DEFAULT_CACHE_RESPONSE_TIMEOUT': 5,
+# }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:abcd1234@127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": "mysecret"
+        }
+    }
 }
