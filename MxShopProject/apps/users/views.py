@@ -59,7 +59,7 @@ class UserRegisterViewset(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         # 校验数据
         serializer.is_valid(raise_exception=True)
-        # 数据校验通过后,保存数据
+        # 数据校验通过后,保存用户数据
         user = self.perform_create(serializer)
         # # 创建token
         token = TokenObtainPairSerializer.get_token(user=user)

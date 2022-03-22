@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.goods.models import Goods, GoodsCategory
+from apps.goods.models import Goods, GoodsCategory, GoodsImage
 
 
 class CategorySerializer3(serializers.ModelSerializer):
@@ -24,6 +24,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class GoodsImageSerializer(serializers.ModelSerializer):
+    """
+    商品详情页轮播图
+    """
+    class Meta:
+        model = GoodsImage
+        fields = ("image", )
+
+
 # 通过ModelSerializer直接序列化Model数据
 class GoodsSerializer(serializers.ModelSerializer):
     """
@@ -32,6 +41,7 @@ class GoodsSerializer(serializers.ModelSerializer):
 
     # 将goods中category外键显示出来
     category = CategorySerializer()
+    images = GoodsImageSerializer(many=True)
 
     class Meta:
         model = Goods
