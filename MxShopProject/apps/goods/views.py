@@ -6,6 +6,9 @@ from rest_framework.viewsets import GenericViewSet
 from .serializers import CategorySerializer, GoodsSerializer
 from .filters import GoodsFilter
 from rest_framework.pagination import PageNumberPagination
+# 缓存
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
+
 
 class GoodsPagination(PageNumberPagination):
     # 每页显示条目
@@ -18,7 +21,7 @@ class GoodsPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class GoodsListViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+class GoodsListViewSet(CacheResponseMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
     # 调用自定义过滤器,使用自定义过滤器时需引入DjangoFilterBackend
@@ -42,5 +45,3 @@ class GoodsListViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 class CategoryViewset(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = GoodsCategory.objects.filter(category_type=1)
     serializer_class = CategorySerializer
-
-
