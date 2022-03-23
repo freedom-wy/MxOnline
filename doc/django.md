@@ -307,5 +307,12 @@ class JwtAuthorizationMiddleware(MiddlewareMixin):
 # 3、在视图中获取payload
 # 4、注意要在settings中添加该中间件
 ```
+#### 13、django websocket
+##### 13.1 轮询
+```text
+1、轮询分为短轮询和长轮询
+2、短轮询多是基于前端定时器不断轮询获取数据库中数据,长轮询多是基于前端发送请求后不断递归取数据,后端使用队列技术,有数据时直接返回,无数据时等待超时时间
+```
+
 
 
