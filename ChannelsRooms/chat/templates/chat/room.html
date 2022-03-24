@@ -13,10 +13,12 @@
 <script>
     var roomName = {{ room_name_json }};
 
+    // ws://127.0.0.1:8000/ws/chat/test1/
     var chatSocket = new WebSocket(
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
 
+    // 获取从服务端发来的消息
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];
@@ -37,6 +39,7 @@
     document.querySelector('#chat-message-submit').onclick = function(e) {
         var messageInputDom = document.querySelector('#chat-message-input');
         var message = messageInputDom.value;
+        // 发送消息
         chatSocket.send(JSON.stringify({
             'message': message
         }));
