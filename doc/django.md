@@ -316,6 +316,9 @@ class JwtAuthorizationMiddleware(MiddlewareMixin):
 ##### 13.2 websocket 特点：建立连接后服务端可以主动发起请求
 ```text
 1、应用场景：聊天室，实时图表
+2、当django接收http请求时,他会根据URLconf以查找视图函数,然后调用视图函数来处理请求,当channels接收websocket连接时,
+他会根据路由配置以查找对应的consumer,然后调用consumer上的各种函数来处理来自这个连接的事件
+
 ```
 
 
