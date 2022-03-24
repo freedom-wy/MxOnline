@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "chat"
+    "chat",
+    "channels"
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ChannelsRooms.wsgi.application'
+ASGI_APPLICATION = "ChannelsRooms.routing.application"
 
 
 # Database
