@@ -318,7 +318,61 @@ class JwtAuthorizationMiddleware(MiddlewareMixin):
 1、应用场景：聊天室，实时图表
 2、当django接收http请求时,他会根据URLconf以查找视图函数,然后调用视图函数来处理请求,当channels接收websocket连接时,
 他会根据路由配置以查找对应的consumer,然后调用consumer上的各种函数来处理来自这个连接的事件
+```
+##### 13.3 websocket创建流程
+```python
+# 1、在项目目录下创建总websocket路由
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+# 应用自己的路由
+import chat.routing
 
+
+# 和django总的urls.py相同,用于寻找应用下的websocket路由
+application = ProtocolTypeRouter(
+    {
+        "websocket": AuthMiddlewareStack(
+            URLRouter(
+                chat.routing.websocket_urlpatterns
+            )
+        )
+    }
+)
+# 2、在settings中添加channels应用
+INSTALLED_APPS = [
+    "chat",
+    "channels"
+]
+
+ASGI_APPLICATION = "ChannelsRooms.routing.application"
+
+# 3、编写websocket的视图文件consumers.py
+from channels.generic.websocket import WebsocketConsumer
+import json
+
+class ChatConsumer(WebsocketConsumer):
+    def connect(self):
+        self.accept()
+
+    def disconnect(self, close_code):
+        pass
+
+    def receive(self, text_data=None, bytes_data=None):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+
+        self.send(text_data=json.dumps({
+            'message': message
+        }))
+
+# 4、编写应用的websocket路由chat/routing.py
+from django.urls import re_path
+from .consumers import ChatConsumer
+
+
+websocket_urlpatterns = [
+    re_path("^ws/chat/(?P<room_name>[^/]+)/$", ChatConsumer.as_asgi())
+]
 ```
 
 

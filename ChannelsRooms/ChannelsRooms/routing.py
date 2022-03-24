@@ -1,5 +1,6 @@
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
+# 应用自己的路由
 import chat.routing
 
 
