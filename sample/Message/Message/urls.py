@@ -16,8 +16,16 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 from apps.message_form1.views import message_views
+from apps.message_form1.views import ShotGetMessage, ShotPostMessage, LongCreateMessage, LongGetMessage, LongPostMessage
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    # 短轮询
+    path("shot_get/", ShotGetMessage.as_view(), name="get_message"),
+    path("shot_post/", ShotPostMessage.as_view(), name="post_message"),
+    # 长轮询
+    path("create_room/", LongCreateMessage.as_view(), name="long_create"),
+    path("long_get/", LongGetMessage.as_view(), name="long_get"),
+    path("long_post/", LongPostMessage.as_view(), name="long_post"),
     # 添加应用的url和视图函数
     path('', message_views)
 ]
