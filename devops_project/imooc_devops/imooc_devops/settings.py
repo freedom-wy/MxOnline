@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "scanhosts"
+    "apps.scanhosts"
 ]
 
 # 日志相关配置信息
@@ -64,7 +64,7 @@ LOGGING = {
         'file': {
             'level': 'WARNING',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'LOG', 'devops.log'),
+            'filename': os.path.join(BASE_DIR, 'LOGS', 'devops.log'),
         },
 
     },
