@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic.base import View
 from .models import UserIPInfo, BrowseInfo
 from django.http import JsonResponse
+from utils.log import logger
 
 
 # Create your views here.
@@ -14,12 +15,22 @@ class UserInfoView(View):
     def get(self, request):
         ip_addr = request.META.get("REMOTE_ADDR")
         user_ua = request.META.get("HTTP_USER_AGENT")
+        if not all((ip_addr, user_ua)):
+            logger.warning("客户端信息不完整!!!")
+            content = {
+                "STATUS": "faile",
+                "INFO": "User info",
+                "IP": None,
+                "UA": None
+            }
+            return JsonResponse(data=content, status=404)
 
         user_obj = UserIPInfo.objects.filter(ip=ip_addr)
         if not user_obj:
             res = UserIPInfo.objects.create(ip=ip_addr)
             ip_addr_id = res.id
         else:
+            logger.info("IP地址: {}已存在!".format(ip_addr))
             ip_addr_id = user_obj.first().id
 
         BrowseInfo.objects.create(useragent=user_ua, userip_id=ip_addr_id)

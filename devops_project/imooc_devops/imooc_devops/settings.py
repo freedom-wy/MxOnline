@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,8 +38,49 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "scanhosts.apps.ScanhostsConfig"
+    "scanhosts"
 ]
+
+# 日志相关配置信息
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    # 'filters': {
+    #     'require_debug_true': {
+    #         '()': 'django.utils.log.RequireDebugTrue',
+    #     },
+    # },
+    'formatters': {
+        'standard': {
+            'format': '[%(levelname)s][%(asctime).19s][%(module)s][%(funcName)s][%(lineno)d][%(threadName)s] : %(message)s '
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'LOG', 'devops.log'),
+        },
+
+    },
+    'loggers': {
+        'django': {
+            'handlers': [
+                'console',
+                'file',
+            ],
+            'level': 'INFO',
+            'propagate': True  # 是否继承父类的log信息
+        },
+
+    }
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
