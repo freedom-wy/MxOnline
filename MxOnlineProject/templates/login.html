@@ -42,7 +42,7 @@
                 <li>服务电话：<span>33333333</span></li>
 {#                通过url方法查找login路由#}
                 <li class="active"><a href="{% url 'login' %}">[登录]</a></li>
-                <li><a href="register.html">[注册]</a></li>
+                <li><a href="{% url 'register' %}">[注册]</a></li>
             </ul>
         </div>
     </div>
@@ -68,10 +68,11 @@
             </div>
             <div class="fl form-box">
                 <div class="tab">
-                    <h2 class="active">账号登录</h2>
-                    <h2 >动态登录</h2>
+                    <h2 class="{% if dynamic_login %}{% else %}active{% endif %}">账号登录</h2>
+                    <h2 class="{% if dynamic_login %}active{% else %}{% endif %}">动态登录</h2>
                 </div>
-                <form class="tab-form" action="{% url 'login' %}" method="post" autocomplete="off" id="form1">
+{#                用户名密码登录方式#}
+                <form class="tab-form {% if dynamic_login %}hide{% else %}{% endif %}" action="{% url 'login' %}?next={{ next }}" method="post" autocomplete="off" id="form1">
 {#                    如果用户名form校验失败则弹出提示#}
 {#                    {% if login_form.errors.username %}errorput{% endif %}是一个CSS样式#}
                     <div class="form-group marb20 {% if login_form.errors.username %}errorput{% endif %}">
@@ -96,27 +97,28 @@
                      <input class="btn btn-green" id="jsLoginBtn" type="submit" value="立即登录 > " />
                 {% csrf_token %}
                 </form>
-                <form class="tab-form hide" id="mobile_register_form" autocomplete="off" method="post" id="form2">
-
+{#                手机号验证码短信验证码登录方式#}
+                <form class="tab-form {% if dynamic_login %}{% else %}hide{% endif %}" action="{% url 'd_login' %}?next={{ next }}" id="mobile_register_form" autocomplete="off" method="post" id="form2">
+                    {% csrf_token %}
                     <div class="form-group marb20">
-                        <input id="jsRegMobile" name="mobile" type="text" placeholder="请输入您的手机号码">
+                        <input id="jsRegMobile" name="mobile" value="{{ login_form.mobile.value|default_if_none:'' }}" type="text" placeholder="请输入您的手机号码">
                     </div>
                     <div class="form-group marb20 blur" id="jsRefreshCode">
-{#                        图片验证码#}
                         {{ login_form.captcha }}
+                        {{ d_form.captcha }}
                     </div>
                     <div class="clearfix">
                         <div class="form-group marb8 verify-code">
-                            <input id="jsPhoneRegCaptcha" name="code" type="text" placeholder="输入手机验证码">
+                            <input id="jsPhoneRegCaptcha" name="code" value="{{ login_form.code.value|default_if_none:'' }}" type="text" placeholder="输入手机验证码">
                         </div>
                         <input class="verify-code-btn sendcode" id="jsSendCode" value="发送验证码">
                     </div>
-                    <div class="error btns" id="jsMobileTips" style="display: none;"></div>
+                    <div class="error btns" id="jsMobileTips" style="">{% if login_form.errors %}{% for key, error in login_form.errors.items %}{{ error }}{% endfor %}{% else %}{{ msg }}{% endif %}</div>
                     <div class="auto-box marb8">
                     </div>
                     <input class="btn btn-green" id="jsMobileRegBtn" type="button" value="立即登录">
                 </form>
-                <p class="form-p">没有慕学在线网帐号？<a href="register.html">[立即注册]</a></p>
+                <p class="form-p">没有慕学在线网帐号？<a href="{% url 'register' %}">[立即注册]</a></p>
             </div>
         </div>
     </div>

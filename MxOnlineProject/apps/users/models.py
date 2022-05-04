@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from utils.models_base import BaseModels
+import datetime
 
 GENDER_CHOICES = (
     ("male", "男"),
@@ -27,3 +28,13 @@ class UserProfile(AbstractUser):
 
     def __str__(self):
         return self.nick_name if self.nick_name else self.username
+
+
+# 短信验证码表
+class PhoneCode(BaseModels):
+    phone_num = models.CharField(max_length=11, verbose_name="手机号码", primary_key=True)
+    phone_code = models.CharField(max_length=4, verbose_name="短信验证码")
+
+    class Meta:
+        verbose_name = "短信验证码"
+        verbose_name_plural = verbose_name

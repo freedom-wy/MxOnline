@@ -198,7 +198,7 @@ from rest_framework.response import Response
 from rest_framework import status
 ```
 #### 9、rest_framework继承了APIView,注册路由时与继承View相同,path("student_api/", StudentApiView.as_view(), name="student_api")
-#### 10、GenericAPIView通用视图类
+#### 10、GenericAPIView通用视图类,需要显性的编写get,post等方法,显性执行save等操作
 ```python
 # serializer_class 类属性,指明视图使用的序列化器类
 # queryset 类属性,指明使用的数据查询集,model查询数据
@@ -235,7 +235,7 @@ class StudentGenericAPIView(GenericAPIView):
         serializer2 = self.get_serializer(instance=instance)
         return Response(serializer2.data)
 ```
-#### 11、5个视图扩展类
+#### 11、5个视图扩展类,需要和GenericAPIView配合使用,5个视图扩展类简化了原GenericAPIView中get,post等方法的复杂代码
 ```python
 # 获取多条数据
 from rest_framework.mixins import ListModelMixin
@@ -271,9 +271,9 @@ class StudentsListView(ListModelMixin, GenericAPIView, CreateModelMixin):
         return self.list(request)
 
     def post(self, request):
-        return self
+        return self.create(request)
 ```
-#### GenericAPIView的视图子类
+#### 12、GenericAPIView的视图子类,更加简化代码,仅需定义queryset = Student.objects.all(), serializer_class = StudentModelSerializer
 ```python
 """
 1）CreateAPIView
@@ -311,8 +311,227 @@ class Student3GenericAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentModelSerializer
 ```
+#### ============以上视图类的访问所有数据和访问一条数据需要两个路由,两个视图类,以下可以合并成一个视图类，一个路由==========
+#### 13、通过视图集解决多路由,多视图类问题
+#### 14、ViewSet主要通过继承ViewSetMixin来实现在调用as_view()时传入字典{“http请求”：“视图方法”}的映射处理工作，如{‘get’:‘list’}
+#### 15、ViewSet视图集类不再限制视图方法名只允许get()、post()等这种情况了，而是实现允许开发者根据自己的需要定义自定义方法名，例如 list() 、create() 等，然后经过路由中使用http和这些视图方法名进行绑定调用
+```python
+from django.urls import path, re_path
+
+from vset.views import BookView
+
+urlpatterns = [
+    # path("set", views.BookView.as_view({"http请求":"视图方法"})),
+    path("books/", BookView.as_view({
+        "get": "get_all_book",
+        "post": "add_book"
+    })),
+    re_path("^books/(?P<pk>\d+)$", BookView.as_view({
+        "get": "get_one_book",
+        "put": "edit_book",
+        "delete": "delete",
+    })),
+]
+```
+
+```python
+from rest_framework import serializers
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
+
+from sers.models import Book
 
 
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = "__all__"
+
+
+class BookView(ViewSet):
+
+    def get_all_book(self, request):
+
+        books = Book.objects.all()
+        bs = BookSerializer(instance=books, many=True)
+        return Response(bs.data)
+
+    def add_book(self, request):
+        bs = BookSerializer(data=request.data)
+        if bs.is_valid():
+            bs.save()
+            return Response(bs.data)
+        else:
+            return Response(bs.errors)
+
+    def get_one_book(self, request, pk):
+        book = Book.objects.get(pk=pk)
+        bs = BookSerializer(instance=book)
+        return Response(bs.data)
+
+    def edit_book(self, request, pk):
+        instance = Book.objects.get(pk=pk)
+        bs = BookSerializer(instance=instance, data=request.data)
+        if bs.is_valid():
+            bs.save()
+            return Response(bs.data)
+        else:
+            return Response(bs.errors)
+
+    def delete(self, request, pk):
+        Book.objects.get(pk=pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+```
+#### 16、GenericViewSet继承自GenericAPIView和ViewSetMixin，GenericAPIView需要显性编写get,post等方法,显性执行save等操作,ViewSetMixin在as_view中自定义路由
+#### 17、GenericViewSet可以和5个视图扩展类结合使用,这样可以不用定义get,post等方法,仅定义serialize和queryset即可
+#### 18、ModelViewSet继承自GenericViewSet，同时包括了ListModelMixin、RetrieveModelMixin、CreateModelMixin、UpdateModelMixin、DestoryModelMixin
+#### 19、路由
+```python
+from django.urls import path, re_path
+from . import views
+urlpatterns = [
+    ...
+]
+
+"""使用drf提供路由类router给视图集生成路由列表"""
+# 实例化路由类
+# drf提供一共提供了两个路由类给我们使用,他们用法一致,功能几乎一样
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+
+# 注册视图集
+# router.register("路由前缀",视图集类)
+router.register("book",views.BookView)
+
+# 把生成的路由列表追加到urlpatterns
+print( router.urls )
+urlpatterns += router.urls
+```
+#### 20、过滤,安装django-filter包并在settings中注册应用
+```python
+INSTALLED_APPS = [
+    # 过滤应用
+    "django_filters"
+]
+
+# 设置全局过滤规则
+REST_FRAMEWORK = {
+    # 过滤
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
+    ]
+}
+
+# 在视图中设置过滤字段
+filter_fields = ["name", "goods_brief"]
+# 访问时需全字匹配,否则过滤失效
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+class GoodsListViewSet(ModelViewSet):
+    queryset = Goods.objects.all()
+    serializer_class = GoodsSerializerDemo
+    # 在视图中单独使用过滤器
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ["name", "goods_brief"]
+```
+#### 21、排序
+```python
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+
+
+class GoodsListViewSet(ModelViewSet):
+    queryset = Goods.objects.all()
+    serializer_class = GoodsSerializerDemo
+    # 在视图中单独使用过滤器
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_fields = ["name", "goods_brief"]
+    # 排序
+    ordering_fields = ["id", "shop_price"]
+
+# 全局使用
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": [
+        # 过滤
+        "django_filters.rest_framework.DjangoFilterBackend",
+        # 排序
+        "rest_framework.filters.OrderingFilter"
+    ]
+}
+```
+#### 22、分页
+```python
+# 全局分页, PageNumberPagination和LimitOffsetPagination
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS':  'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100  # 每页数目
+}
+# 视图单独分页
+class StudentPageNumberPagination(PageNumberPagination):
+    page_query_param = "page" # 查询字符串中代表页码的变量名
+    page_size_query_param = "size" # 查询字符串中代表每一页数据的变量名
+    page_size = 2 # 每一页的数据量
+    max_page_size = 4 # 允许客户端通过查询字符串调整的最大单页数据量
+
+class Student3ModelViewSet(ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentModelSerializer
+    # 取消当前视图类的分页效果
+    # pagination_class = None
+    # 局部分页
+    pagination_class = StudentPageNumberPagination
+
+# 取消分页
+class GoodsListViewSet(ModelViewSet):
+    queryset = Goods.objects.all()
+    serializer_class = GoodsSerializerDemo
+    # 在视图中单独使用过滤器
+    # filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_fields = ["name", "goods_brief"]
+    ordering_fields = ["id", "shop_price"]
+    # 当pagination_class为None, 该视图不分页
+    # pagination_class = None
+```
+#### 23、解决跨域问题
+#### 同源策略/SOP（Same origin policy）是一种约定，是浏览器的一种安全机制。这里同源需要"协议+域名+端口"三者都相同，否则不能进行Ajax访问。
+```text
+pip install django-cors-headers
+# 注册应用
+INSTALLED_APPS = (
+    'corsheaders',
+)
+# 添加中间件
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', #最好添加至第一行
+]
+# 配置白名单
+CORS_ORIGIN_ALLOW_ALL = True 默认为False
+```
+#### 24、使用drf默认的token认证方案
+```python
+# 1、在settings中注册应用
+INSTALLED_APPS = [
+    # drf默认的token认证方式
+    "rest_framework.authtoken"
+]
+# 2、在settings中添加认证方式
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework.authentication.TokenAuthentication"
+    )
+}
+# 3、配置创建token的路由
+urlpatterns = [
+    # drf默认申请token接口
+    path("api-token-auth/", views.obtain_auth_token),
+]
+# 4、访问应用路由时需要配置请求头 Authorization, Token d7872e08f534682118acba5aa34945edd029f86c
+```
 
 
 
