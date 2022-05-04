@@ -30,3 +30,21 @@ class UserInfoView(View):
             "UA": user_ua
         }
         return JsonResponse(data=content, status=200)
+
+
+class UserHistoryView(View):
+    """
+    展示信息
+    """
+    def get(self, request):
+        ip_list = UserIPInfo.objects.all()
+        infos = {}
+        for item in ip_list:
+            infos[item.ip] = [
+                b_obj.useragent for b_obj in BrowseInfo.objects.filter(userip_id=item.id)
+            ]
+        content = {
+            "STATUS": "success",
+            "INFO": infos
+        }
+        return JsonResponse(data=content, status=200)
