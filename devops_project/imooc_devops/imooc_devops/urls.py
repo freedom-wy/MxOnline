@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from scanhosts.views import UserInfoView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("sendinfos/", UserInfoView.as_view(), name="userinfo")
 ]
